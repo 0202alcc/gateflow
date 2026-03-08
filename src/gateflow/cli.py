@@ -7,16 +7,25 @@ from typing import Any
 
 from gateflow import __version__
 from gateflow.api_shim import execute_api
+from gateflow.backend import backend_export, backend_migrate, backend_status
 from gateflow.config import get_config_value, set_config_value, show_config
 from gateflow.import_luvatrix import check_luvatrix_import_drift, import_luvatrix
-from gateflow.policy import PolicyViolation, enforce_protected_branch_write_guard
+from gateflow.policy import PolicyViolation, enforce_protected_branch_write_guard, enforce_sync_write_guard
 from gateflow.render import render_board, render_gantt
 from gateflow.scaffold import doctor_workspace, scaffold_workspace
 from gateflow.resources import ResourceError, create_resource, delete_resource, get_resource, list_resource, update_resource
+from gateflow.sync import SyncError, sync_apply, sync_from_main, sync_status
 from gateflow.validate import ValidationCommandError, run_validation
 from gateflow.workspace import GateflowWorkspace
 
-RESOURCES = ("milestones", "tasks", "boards", "frameworks", "backlog")
+RESOURCES = (
+    ("milestones", "milestones"),
+    ("tasks", "tasks"),
+    ("boards", "boards"),
+    ("frameworks", "frameworks"),
+    ("backlog", "backlog"),
+    ("closeout-refs", "closeout_refs"),
+)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -61,8 +70,8 @@ def build_parser() -> argparse.ArgumentParser:
     board_p.add_argument("--format", choices=["md", "ascii"])
     board_p.add_argument("--out", type=Path)
 
-    for resource in RESOURCES:
-        rs = sub.add_parser(resource)
+    for command_name, _resource_key in RESOURCES:
+        rs = sub.add_parser(command_name)
         rsub = rs.add_subparsers(dest="action", required=True)
 
         rsub.add_parser("list")
@@ -84,6 +93,19 @@ def build_parser() -> argparse.ArgumentParser:
     import_p.add_argument("--path", type=Path, required=True, help="Path to the Luvatrix repository root.")
     import_p.add_argument("--check", action="store_true", help="Only check drift; do not write .gateflow files.")
 
+    backend_p = sub.add_parser("backend")
+    backend_sub = backend_p.add_subparsers(dest="backend_action", required=True)
+    backend_sub.add_parser("status")
+    backend_migrate_p = backend_sub.add_parser("migrate")
+    backend_migrate_p.add_argument("--to", required=True, choices=["file", "backend"])
+    backend_sub.add_parser("export")
+
+    sync_p = sub.add_parser("sync")
+    sync_sub = sync_p.add_subparsers(dest="sync_action", required=True)
+    sync_sub.add_parser("from-main")
+    sync_sub.add_parser("status")
+    sync_sub.add_parser("apply")
+
     return parser
 
 
@@ -98,6 +120,9 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     except PolicyViolation as exc:
         _emit_error(json_mode=args.json_errors, error_type="policy", exit_code=3, message=str(exc), errors=[str(exc)])
+        return 3
+    except SyncError as exc:
+        _emit_error(json_mode=args.json_errors, error_type="sync", exit_code=3, message=str(exc), errors=[str(exc)])
         return 3
     except (ResourceError, FileNotFoundError, json.JSONDecodeError, ValueError) as exc:
         _emit_error(json_mode=args.json_errors, error_type="validation", exit_code=2, message=str(exc), errors=[str(exc)])
@@ -123,7 +148,7 @@ def _dispatch(args: argparse.Namespace) -> int:
             print(json.dumps(get_config_value(args.root, args.key), indent=2, sort_keys=True))
             return 0
         if args.config_action == "set":
-            enforce_protected_branch_write_guard(args.root)
+            _enforce_write_policies(args.root)
             print(set_config_value(args.root, args.key, args.value))
             return 0
         if args.config_action == "show":
@@ -134,7 +159,7 @@ def _dispatch(args: argparse.Namespace) -> int:
     if args.command == "api":
         method, endpoint = _resolve_api_method_and_path(args.verb_or_method, args.path)
         if method in {"POST", "PATCH", "DELETE"}:
-            enforce_protected_branch_write_guard(args.root)
+            _enforce_write_policies(args.root)
         print(json.dumps(execute_api(method, endpoint, body=args.body, root=args.root), indent=2, sort_keys=True))
         return 0
 
@@ -168,8 +193,34 @@ def _dispatch(args: argparse.Namespace) -> int:
         print(json.dumps({"status": "ok", **result.as_dict()}, indent=2, sort_keys=True))
         return 0
 
+    if args.command == "backend":
+        if args.backend_action == "status":
+            print(json.dumps(backend_status(args.root), indent=2, sort_keys=True))
+            return 0
+        if args.backend_action == "migrate":
+            _enforce_write_policies(args.root)
+            print(json.dumps(backend_migrate(args.root, args.to), indent=2, sort_keys=True))
+            return 0
+        if args.backend_action == "export":
+            print(json.dumps(backend_export(args.root), indent=2, sort_keys=True))
+            return 0
+        raise ValueError(f"unsupported backend action: {args.backend_action}")
+
+    if args.command == "sync":
+        if args.sync_action == "from-main":
+            print(json.dumps(sync_from_main(args.root), indent=2, sort_keys=True))
+            return 0
+        if args.sync_action == "status":
+            print(json.dumps(sync_status(args.root), indent=2, sort_keys=True))
+            return 0
+        if args.sync_action == "apply":
+            enforce_protected_branch_write_guard(args.root)
+            print(json.dumps(sync_apply(args.root), indent=2, sort_keys=True))
+            return 0
+        raise ValueError(f"unsupported sync action: {args.sync_action}")
+
     workspace = GateflowWorkspace(args.root)
-    resource = args.command
+    resource = dict(RESOURCES)[args.command]
     action = args.action
 
     if action == "list":
@@ -179,18 +230,23 @@ def _dispatch(args: argparse.Namespace) -> int:
         print(json.dumps(get_resource(workspace, resource, args.item_id), indent=2, sort_keys=True))
         return 0
     if action == "create":
-        enforce_protected_branch_write_guard(args.root)
+        _enforce_write_policies(args.root)
         print(create_resource(workspace, resource, json.loads(args.body)))
         return 0
     if action == "update":
-        enforce_protected_branch_write_guard(args.root)
+        _enforce_write_policies(args.root)
         print(update_resource(workspace, resource, args.item_id, json.loads(args.body)))
         return 0
     if action == "delete":
-        enforce_protected_branch_write_guard(args.root)
+        _enforce_write_policies(args.root)
         print(delete_resource(workspace, resource, args.item_id))
         return 0
     raise ValueError(f"unsupported action: {action}")
+
+
+def _enforce_write_policies(root: Path) -> None:
+    enforce_protected_branch_write_guard(root)
+    enforce_sync_write_guard(root)
 
 
 def _resolve_api_method_and_path(verb_or_method: str, path: str | None) -> tuple[str, str]:

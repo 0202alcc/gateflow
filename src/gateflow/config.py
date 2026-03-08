@@ -6,7 +6,7 @@ from typing import Any
 
 from gateflow.io import read_json, write_json
 
-_ALLOWED_PREFIXES = ("policy.protected_branches", "defaults", "render")
+_ALLOWED_PREFIXES = ("policy", "defaults", "render", "storage")
 
 
 def config_path(root: Path) -> Path:
@@ -28,7 +28,7 @@ def get_config_value(root: Path, key: str) -> Any:
 
 def set_config_value(root: Path, key: str, value_raw: str) -> str:
     if not any(key == allowed or key.startswith(f"{allowed}.") for allowed in _ALLOWED_PREFIXES):
-        raise ValueError("config key must target policy.protected_branches, defaults, or render")
+        raise ValueError("config key must target policy, defaults, render, or storage")
 
     data = show_config(root)
     value = _coerce_value(value_raw)

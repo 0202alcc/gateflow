@@ -95,6 +95,7 @@ def check_luvatrix_import_drift(path: Path) -> DriftReport:
 
     gateflow_dir = root / ".gateflow"
     json_files = ["config.json", "milestones.json", "tasks.json", "boards.json", "backlog.json"]
+    json_files.append("closeout/metadata_refs.json")
     for name in json_files:
         target = gateflow_dir / name
         rel_path = str(target.relative_to(root))
@@ -236,6 +237,11 @@ def _build_expected_payload(root: Path, stamped: str) -> dict[str, Any]:
             "updated_at": stamped,
             "version": "gateflow_v1",
         },
+        "closeout/metadata_refs.json": {
+            "items": _build_closeout_refs(milestones, closeout_map),
+            "updated_at": stamped,
+            "version": "gateflow_v1",
+        },
         "closeout": closeout_map,
     }
 
@@ -246,7 +252,7 @@ def _write_expected_payload(root: Path, payload: dict[str, Any]) -> None:
     closeout_dir = gateflow_dir / "closeout"
     closeout_dir.mkdir(parents=True, exist_ok=True)
 
-    for name in ("config.json", "milestones.json", "tasks.json", "boards.json", "backlog.json"):
+    for name in ("config.json", "milestones.json", "tasks.json", "boards.json", "backlog.json", "closeout/metadata_refs.json"):
         write_json(gateflow_dir / name, payload[name])
 
     closeout_map: dict[str, str] = payload["closeout"]
@@ -312,6 +318,22 @@ def _required_closeout_milestone_ids(milestones: list[dict[str, Any]]) -> list[s
         if milestone.get("status") == "Complete" or "closeout_criteria" in milestone:
             ids.append(milestone_id)
     return sorted(set(ids))
+
+
+def _build_closeout_refs(milestones: list[dict[str, Any]], closeout_map: dict[str, str]) -> list[dict[str, str]]:
+    milestone_ids = set(_required_closeout_milestone_ids(milestones))
+    refs: list[dict[str, str]] = []
+    for filename in sorted(closeout_map.keys()):
+        milestone_id = filename.replace("_closeout.md", "").upper()
+        status = "required" if milestone_id in milestone_ids else "optional"
+        refs.append(
+            {
+                "id": milestone_id,
+                "closeout_path": f".gateflow/closeout/{filename}",
+                "status": status,
+            }
+        )
+    return refs
 
 
 def _placeholder_closeout_text(milestone_id: str) -> str:

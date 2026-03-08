@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from gateflow.io import read_json
+from gateflow.sync import SyncError, require_synced_writes
 
 
 class PolicyViolation(RuntimeError):
@@ -40,6 +41,20 @@ def enforce_protected_branch_write_guard(root: Path) -> None:
                 "POLICY_PROTECTED_BRANCH: writes are blocked on protected branch "
                 f"'{branch}' (pattern='{regex}')"
             )
+
+
+def enforce_sync_write_guard(root: Path) -> None:
+    config = read_json(root / ".gateflow" / "config.json")
+    policy = config.get("policy", {})
+    if not isinstance(policy, dict):
+        raise ValueError("config policy must be an object")
+    require_sync = bool(policy.get("require_sync_before_write", False))
+    if not require_sync:
+        return
+    try:
+        require_synced_writes(root)
+    except SyncError as exc:
+        raise PolicyViolation(str(exc)) from exc
 
 
 def _current_branch(root: Path) -> str | None:

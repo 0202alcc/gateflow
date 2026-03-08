@@ -1,0 +1,23 @@
+name: backend-mode-smoke
+
+on:
+  push:
+    branches:
+      - main
+      - 'codex/**'
+  pull_request:
+
+jobs:
+  backend-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Install package + test deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e . pytest
+      - name: Run backend/sync integration smoke tests
+        run: pytest tests/test_gateflow_cli_backend_sync.py -q

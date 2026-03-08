@@ -20,9 +20,14 @@ def scaffold_workspace(root: Path, profile: str) -> list[str]:
         "defaults": {"framework": "gateflow_v1", "warning_mode": "warn"},
         "overlays": overlay_names,
         "profiles": _overlay_payload(overlay_names),
-        "policy": {"protected_branches": ["main"], "protected_branch_patterns": []},
+        "policy": {
+            "protected_branches": ["main"],
+            "protected_branch_patterns": [],
+            "require_sync_before_write": False,
+        },
         "profile": "minimal",
         "render": {"format": "md", "lane_mode": "milestone"},
+        "storage": {"mode": "file", "sqlite_path": ".gateflow/gateflow.db"},
         "updated_at": stamped,
         "version": "gateflow_v1",
     }
@@ -32,6 +37,7 @@ def scaffold_workspace(root: Path, profile: str) -> list[str]:
     created.extend(_ensure_json(gateflow_dir / "tasks.json", _empty_ledger(stamped)))
     created.extend(_ensure_json(gateflow_dir / "boards.json", _empty_ledger(stamped)))
     created.extend(_ensure_json(gateflow_dir / "backlog.json", _empty_ledger(stamped)))
+    created.extend(_ensure_json(closeout_dir / "metadata_refs.json", _empty_ledger(stamped)))
     return created
 
 
@@ -43,6 +49,7 @@ def doctor_workspace(root: Path) -> dict[str, object]:
         "tasks.json",
         "boards.json",
         "backlog.json",
+        "closeout/metadata_refs.json",
         "closeout",
     ]
     missing = [name for name in expected if not (gateflow_dir / name).exists()]
@@ -109,7 +116,7 @@ def _overlay_payload(overlays: list[str]) -> dict[str, dict[str, object]]:
 def _merge_config(existing: dict[str, object], target: dict[str, object]) -> tuple[dict[str, object], bool]:
     merged = dict(existing)
     changed = False
-    for key in ("version", "updated_at", "profile", "defaults", "policy", "render"):
+    for key in ("version", "updated_at", "profile", "defaults", "policy", "render", "storage"):
         if key not in merged:
             merged[key] = target[key]
             changed = True

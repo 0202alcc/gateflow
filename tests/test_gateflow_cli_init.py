@@ -20,6 +20,7 @@ def test_init_scaffold_creates_core_files(tmp_path: Path) -> None:
     assert (gateflow / "boards.json").exists()
     assert (gateflow / "backlog.json").exists()
     assert (gateflow / "closeout").is_dir()
+    assert (gateflow / "closeout" / "metadata_refs.json").exists()
 
 
 def test_init_scaffold_is_idempotent(tmp_path: Path) -> None:

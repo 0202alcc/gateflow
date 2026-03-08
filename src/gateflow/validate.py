@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any
 
 from gateflow.io import read_json
+from gateflow.workspace import GateflowWorkspace
 
 REQUIRED_CLOSEOUT_SECTIONS = [
     "Objective Summary",
@@ -24,9 +25,9 @@ class ValidationCommandError(ValueError):
 
 
 def validate_links(root: Path) -> list[str]:
-    gateflow = root / ".gateflow"
-    milestones = read_json(gateflow / "milestones.json").get("items", [])
-    tasks = read_json(gateflow / "tasks.json").get("items", [])
+    workspace = GateflowWorkspace(root)
+    milestones = workspace.list_items("milestones")
+    tasks = workspace.list_items("tasks")
     task_index = {str(task.get("id")): task for task in tasks}
     errors: list[str] = []
 

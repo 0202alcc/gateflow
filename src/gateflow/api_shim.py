@@ -5,15 +5,17 @@ from pathlib import Path
 from typing import Any
 
 from gateflow.resources import create_resource, delete_resource, get_resource, list_resource, update_resource
+from gateflow.storage import resolve_storage_mode
 from gateflow.workspace import GateflowWorkspace
 
-VALID_RESOURCES = {"milestones", "tasks", "boards", "frameworks", "backlog"}
+VALID_RESOURCES = {"milestones", "tasks", "boards", "frameworks", "backlog", "closeout-refs"}
 
 
 def execute_api(method: str, endpoint: str, *, body: str | None, root: Path) -> dict[str, Any]:
     method = method.upper()
     resource, item_id = _parse_endpoint(endpoint)
     workspace = GateflowWorkspace(root)
+    storage_mode = resolve_storage_mode(root)
 
     result: Any
     if method == "GET":
@@ -37,6 +39,11 @@ def execute_api(method: str, endpoint: str, *, body: str | None, root: Path) -> 
 
     return {
         "compatibility_mode": "planning_api_shim_v1",
+        "compatibility_warnings": (
+            ["backend_mode_active: source of truth is SQLite; use `gateflow backend export` for file snapshots"]
+            if storage_mode.mode == "backend"
+            else []
+        ),
         "method": method,
         "path": endpoint,
         "result": result,
@@ -52,6 +59,8 @@ def _parse_endpoint(endpoint: str) -> tuple[str, str | None]:
     resource = parts[0]
     if resource not in VALID_RESOURCES:
         raise ValueError(f"unsupported resource: {resource}")
+    if resource == "closeout-refs":
+        resource = "closeout_refs"
     if len(parts) == 1:
         return resource, None
     return resource, parts[1]
