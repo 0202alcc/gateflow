@@ -1,4 +1,4 @@
-name: backend-mode-smoke
+name: backend-local-external-smoke
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
   pull_request:
 
 jobs:
-  backend-smoke:
+  backend-local-external-smoke:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,5 +19,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e . pytest
-      - name: Run backend/sync integration smoke tests
-        run: pytest tests/test_gateflow_cli_backend_sync.py -q
+      - name: Run backend/local-external integration smoke tests
+        run: |
+          pytest tests/test_gateflow_cli_backend_sync.py -q
+          pytest tests/test_gateflow_cli_connect_local_external.py -q

@@ -3,7 +3,9 @@ from __future__ import annotations
 from datetime import date
 from pathlib import Path
 
+from gateflow.connect import bootstrap_local_external_connection, ensure_default_local_external_connection
 from gateflow.io import read_json, write_json
+from gateflow.storage import resolve_storage_mode
 
 
 def scaffold_workspace(root: Path, profile: str) -> list[str]:
@@ -13,6 +15,7 @@ def scaffold_workspace(root: Path, profile: str) -> list[str]:
     closeout_dir.mkdir(parents=True, exist_ok=True)
 
     created: list[str] = []
+    config_existed = (gateflow_dir / "config.json").exists()
     stamped = date.today().isoformat()
 
     overlay_names = _profile_to_overlays(profile)
@@ -27,7 +30,7 @@ def scaffold_workspace(root: Path, profile: str) -> list[str]:
         },
         "profile": "minimal",
         "render": {"format": "md", "lane_mode": "milestone"},
-        "storage": {"mode": "file", "sqlite_path": ".gateflow/gateflow.db"},
+        "storage": {"mode": "local-external", "provider": "sqlite", "sqlite_path": ".gateflow/gateflow.db"},
         "updated_at": stamped,
         "version": "gateflow_v1",
     }
@@ -39,6 +42,16 @@ def scaffold_workspace(root: Path, profile: str) -> list[str]:
     created.extend(_ensure_json(gateflow_dir / "backlog.json", _empty_ledger(stamped)))
     created.extend(_ensure_json(closeout_dir / "metadata_refs.json", _empty_ledger(stamped)))
     created.extend(_ensure_json(closeout_dir / "closure_issues.json", _empty_ledger(stamped)))
+    if config_existed:
+        config = read_json(gateflow_dir / "config.json")
+        mode = str(config.get("storage", {}).get("mode", "file")).strip().lower()
+        if mode == "local-external":
+            bootstrap_local_external_connection(root)
+    else:
+        ensure_default_local_external_connection(root)
+        connection_file = gateflow_dir / "connection.json"
+        if connection_file.exists():
+            created.append(str(connection_file))
     return created
 
 
@@ -55,9 +68,25 @@ def doctor_workspace(root: Path) -> dict[str, object]:
         "closeout",
     ]
     missing = [name for name in expected if not (gateflow_dir / name).exists()]
+    mode = "unknown"
+    target_backend = "unknown"
+    sqlite_path = None
+    if (gateflow_dir / "config.json").exists():
+        try:
+            resolved = resolve_storage_mode(root)
+            mode = resolved.mode
+            target_backend = "local-sqlite" if mode in {"backend", "local-external"} else "file-ledgers"
+            if mode in {"backend", "local-external"}:
+                sqlite_path = str(resolved.sqlite_path)
+        except Exception:
+            mode = "invalid"
+            target_backend = "invalid"
     return {
         "ok": len(missing) == 0,
         "missing": missing,
+        "mode": mode,
+        "target_backend": target_backend,
+        "sqlite_path": sqlite_path,
         "root": str(root),
     }
 

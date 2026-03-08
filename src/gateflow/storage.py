@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterator
 
+from gateflow.connection import resolve_local_external_sqlite_path
 from gateflow.io import read_json, write_json
 
 RESOURCE_KEYS = ("milestones", "tasks", "boards", "frameworks", "backlog", "closeout_refs")
@@ -169,6 +170,17 @@ class SQLiteStorage(Storage):
         return conn
 
 
+class LocalExternalStorage(SQLiteStorage):
+    def __init__(self, root: Path, sqlite_path: Path) -> None:
+        super().__init__(root=root, sqlite_path=sqlite_path)
+        self._mirror = FileStorage(root=root)
+
+    def write_items(self, resource: str, items: list[dict[str, Any]]) -> None:
+        ordered = _sort_items(items, resource=resource)
+        super().write_items(resource, ordered)
+        self._mirror.write_items(resource, ordered)
+
+
 def resolve_storage_mode(root: Path) -> StorageMode:
     config = read_json(root / ".gateflow" / "config.json")
     storage_cfg = config.get("storage", {})
@@ -176,17 +188,27 @@ def resolve_storage_mode(root: Path) -> StorageMode:
     mode_override = os.environ.get("GATEFLOW_STORAGE_MODE")
     if mode_override:
         mode = mode_override.strip().lower()
-    sqlite_rel = str(storage_cfg.get("sqlite_path", ".gateflow/gateflow.db"))
-    sqlite_path = (root / sqlite_rel).resolve() if not Path(sqlite_rel).is_absolute() else Path(sqlite_rel)
-    if mode not in {"file", "backend"}:
-        raise ValueError("config storage.mode must be 'file' or 'backend'")
+    sqlite_path = resolve_configured_backend_sqlite_path(root)
+    if mode == "local-external":
+        sqlite_path = resolve_local_external_sqlite_path(root)
+    if mode not in {"file", "backend", "local-external"}:
+        raise ValueError("config storage.mode must be 'file', 'backend', or 'local-external'")
     return StorageMode(mode=mode, sqlite_path=sqlite_path)
+
+
+def resolve_configured_backend_sqlite_path(root: Path) -> Path:
+    config = read_json(root / ".gateflow" / "config.json")
+    storage_cfg = config.get("storage", {})
+    sqlite_rel = str(storage_cfg.get("sqlite_path", ".gateflow/gateflow.db"))
+    return (root / sqlite_rel).resolve() if not Path(sqlite_rel).is_absolute() else Path(sqlite_rel)
 
 
 def get_storage(root: Path) -> Storage:
     mode = resolve_storage_mode(root)
     if mode.mode == "backend":
         return SQLiteStorage(root=root, sqlite_path=mode.sqlite_path)
+    if mode.mode == "local-external":
+        return LocalExternalStorage(root=root, sqlite_path=mode.sqlite_path)
     return FileStorage(root=root)
 
 

@@ -9,6 +9,7 @@ from gateflow import __version__
 from gateflow.api_shim import execute_api
 from gateflow.backend import backend_export, backend_migrate, backend_status
 from gateflow.close import CloseCommandError, close_milestone, close_task
+from gateflow.connect import ConnectError, connect_local, connect_remote_stub, connect_status
 from gateflow.config import get_config_value, set_config_value, show_config
 from gateflow.import_luvatrix import check_luvatrix_import_drift, import_luvatrix
 from gateflow.policy import PolicyViolation, enforce_protected_branch_write_guard, enforce_sync_write_guard
@@ -117,6 +118,21 @@ def build_parser() -> argparse.ArgumentParser:
     close_milestone_p.add_argument("item_id")
     close_milestone_p.add_argument("--heads-up", help="Go/No-Go acknowledgement message.")
 
+    connect_p = sub.add_parser("connect")
+    connect_sub = connect_p.add_subparsers(dest="connect_action", required=True)
+    connect_local_p = connect_sub.add_parser("local")
+    connect_local_p.add_argument("--path", type=Path, required=True, help="Path to SQLite DB for local-external mode.")
+    connect_local_p.add_argument("--force", action="store_true", help="Allow rebinding when target DB has another workspace id.")
+    connect_local_p.add_argument(
+        "--allow-in-repo",
+        action="store_true",
+        help="Allow SQLite path inside repo root (not recommended).",
+    )
+    connect_remote_p = connect_sub.add_parser("remote")
+    connect_remote_p.add_argument("--url", required=True, help="Remote backend endpoint URL (contract stub).")
+    connect_remote_p.add_argument("--workspace", help="Optional remote workspace identifier.")
+    connect_sub.add_parser("status")
+
     return parser
 
 
@@ -138,7 +154,7 @@ def main(argv: list[str] | None = None) -> int:
     except CloseCommandError as exc:
         _emit_error(json_mode=args.json_errors, error_type="close", exit_code=2, message=str(exc), errors=[str(exc)])
         return 2
-    except (ResourceError, FileNotFoundError, json.JSONDecodeError, ValueError) as exc:
+    except (ConnectError, ResourceError, FileNotFoundError, json.JSONDecodeError, ValueError) as exc:
         _emit_error(json_mode=args.json_errors, error_type="validation", exit_code=2, message=str(exc), errors=[str(exc)])
         return 2
     except Exception as exc:  # pragma: no cover - defensive contract
@@ -244,6 +260,36 @@ def _dispatch(args: argparse.Namespace) -> int:
             print(json.dumps(close_milestone(workspace, args.item_id, args.heads_up), indent=2, sort_keys=True))
             return 0
         raise ValueError(f"unsupported close action: {args.close_action}")
+
+    if args.command == "connect":
+        if args.connect_action == "local":
+            _enforce_write_policies(args.root)
+            print(
+                json.dumps(
+                    connect_local(
+                        args.root,
+                        path=args.path,
+                        force=bool(args.force),
+                        allow_in_repo=bool(args.allow_in_repo),
+                    ),
+                    indent=2,
+                    sort_keys=True,
+                )
+            )
+            return 0
+        if args.connect_action == "remote":
+            print(
+                json.dumps(
+                    connect_remote_stub(args.root, url=args.url, workspace=args.workspace),
+                    indent=2,
+                    sort_keys=True,
+                )
+            )
+            return 0
+        if args.connect_action == "status":
+            print(json.dumps(connect_status(args.root), indent=2, sort_keys=True))
+            return 0
+        raise ValueError(f"unsupported connect action: {args.connect_action}")
 
     workspace = GateflowWorkspace(args.root)
     resource = dict(RESOURCES)[args.command]

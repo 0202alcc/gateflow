@@ -12,6 +12,7 @@ def _write_json(path: Path, payload: dict) -> None:
 
 def _seed(root: Path) -> None:
     assert main(["--root", str(root), "init", "scaffold", "--profile", "minimal"]) == 0
+    assert main(["--root", str(root), "config", "set", "storage.mode", '"file"']) == 0
 
 
 def test_validate_links_passes_for_consistent_references(tmp_path: Path, capsys) -> None:

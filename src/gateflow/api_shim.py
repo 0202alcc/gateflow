@@ -41,7 +41,7 @@ def execute_api(method: str, endpoint: str, *, body: str | None, root: Path) -> 
         "compatibility_mode": "planning_api_shim_v1",
         "compatibility_warnings": (
             ["backend_mode_active: source of truth is SQLite; use `gateflow backend export` for file snapshots"]
-            if storage_mode.mode == "backend"
+            if storage_mode.mode in {"backend", "local-external"}
             else []
         ),
         "method": method,

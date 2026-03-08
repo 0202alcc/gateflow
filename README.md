@@ -40,6 +40,7 @@ The standalone CLI exposes the extracted command groups:
 - `render`
 - `import-luvatrix`
 - `backend`
+- `connect`
 - `sync`
 - `close`
 - `milestones`
@@ -50,3 +51,5 @@ The standalone CLI exposes the extracted command groups:
 - `closeout-refs`
 
 `import-luvatrix` supports `--check` to emit deterministic drift output and non-zero exit when `.gateflow/*` diverges from `ops/planning/*`.
+
+`init` now defaults new workspaces to `storage.mode=local-external` and records deterministic workspace connection metadata in `.gateflow/connection.json`.
