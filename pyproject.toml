@@ -12,8 +12,8 @@ dependencies = []
 keywords = ["planning", "workflow", "cli", "gateflow"]
 
 [project.urls]
-Homepage = "https://github.com/0202alcc/luvatrix"
-Documentation = "https://github.com/0202alcc/luvatrix/tree/main/gateflow"
+Homepage = "https://github.com/0202alcc/gateflow"
+Documentation = "https://github.com/0202alcc/gateflow"
 
 [project.scripts]
 gateflow = "gateflow.cli:main"
