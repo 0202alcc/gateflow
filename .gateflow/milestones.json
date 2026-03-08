@@ -16,6 +16,19 @@
         "T-GB-009",
         "T-GB-010"
       ]
+    },
+    {
+      "id": "GATEFLOW-STANDARDIZATION-002",
+      "name": "Always-standardized GateFlow branch behavior",
+      "status": "Planned",
+      "task_ids": [
+        "T-GS-001",
+        "T-GS-002",
+        "T-GS-003",
+        "T-GS-004",
+        "T-GS-005",
+        "T-GS-006"
+      ]
     }
   ],
   "updated_at": "2026-03-07",

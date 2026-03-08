@@ -241,6 +241,61 @@
       "milestone_id": "GATEFLOW-BACKEND-001",
       "status": "Done",
       "title": "Define phased rollout with risk register and go no-go gates"
+    },
+    {
+      "depends_on": [],
+      "id": "T-GS-001",
+      "milestone_id": "GATEFLOW-STANDARDIZATION-002",
+      "packet": "docs/task-packets/gateflow-standardization-002-packet.md",
+      "status": "Intake",
+      "title": "Codify standardization packet and acceptance gates"
+    },
+    {
+      "depends_on": [
+        "T-GS-001"
+      ],
+      "id": "T-GS-002",
+      "milestone_id": "GATEFLOW-STANDARDIZATION-002",
+      "status": "Intake",
+      "title": "Enable require_sync_before_write policy in canonical config"
+    },
+    {
+      "depends_on": [
+        "T-GS-001"
+      ],
+      "id": "T-GS-003",
+      "milestone_id": "GATEFLOW-STANDARDIZATION-002",
+      "status": "Intake",
+      "title": "Add CI sync-status gate against main baseline"
+    },
+    {
+      "depends_on": [
+        "T-GS-003"
+      ],
+      "id": "T-GS-004",
+      "milestone_id": "GATEFLOW-STANDARDIZATION-002",
+      "status": "Intake",
+      "title": "Add planning validate-all gate with remediation output"
+    },
+    {
+      "depends_on": [
+        "T-GS-002",
+        "T-GS-003"
+      ],
+      "id": "T-GS-005",
+      "milestone_id": "GATEFLOW-STANDARDIZATION-002",
+      "status": "Intake",
+      "title": "Update operator docs for mandatory branch sync workflow"
+    },
+    {
+      "depends_on": [
+        "T-GS-004",
+        "T-GS-005"
+      ],
+      "id": "T-GS-006",
+      "milestone_id": "GATEFLOW-STANDARDIZATION-002",
+      "status": "Intake",
+      "title": "Run rollout dry-run and capture go/no-go evidence"
     }
   ],
   "updated_at": "2026-03-07",
