@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0a3 - 2026-03-08
+
+- Added `gateflow close task` and `gateflow close milestone` commands with Go/No-Go heads-up enforcement.
+- Added closure validation safeguards so incorrect close attempts fail with actionable errors.
+- Added deterministic closure issue logging at `.gateflow/closeout/closure_issues.json` when close checks fail.
+- Added `gateflow init` shorthand defaulting to `init scaffold --profile minimal`.
+- Expanded test coverage for close workflows and scaffolded closeout issue ledgers.
+
 ## 0.1.0a2 - 2026-03-08
 
 - Hard-deprecated legacy in-repo `gateflow_cli.cli` path and routed wrapper usage to standalone command execution.
