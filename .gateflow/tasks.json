@@ -243,58 +243,178 @@
       "title": "Define phased rollout with risk register and go no-go gates"
     },
     {
+      "actuals": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reopen_count": 0,
+        "tool_calls": 0,
+        "wall_time_sec": 0
+      },
       "depends_on": [],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "go_no_go": {
+        "message": "Go: acceptance gates reviewed for T-GS-001",
+        "received": true,
+        "received_at": "2026-03-08T21:13:52+00:00"
+      },
       "id": "T-GS-001",
       "milestone_id": "GATEFLOW-STANDARDIZATION-002",
       "packet": "docs/task-packets/gateflow-standardization-002-packet.md",
-      "status": "Intake",
+      "status": "Done",
       "title": "Codify standardization packet and acceptance gates"
     },
     {
+      "actuals": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reopen_count": 0,
+        "tool_calls": 0,
+        "wall_time_sec": 0
+      },
       "depends_on": [
         "T-GS-001"
       ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "go_no_go": {
+        "message": "Go: enforcement default validated for T-GS-002",
+        "received": true,
+        "received_at": "2026-03-08T21:13:52+00:00"
+      },
       "id": "T-GS-002",
       "milestone_id": "GATEFLOW-STANDARDIZATION-002",
-      "status": "Intake",
+      "status": "Done",
       "title": "Enable require_sync_before_write policy in canonical config"
     },
     {
+      "actuals": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reopen_count": 0,
+        "tool_calls": 0,
+        "wall_time_sec": 0
+      },
       "depends_on": [
         "T-GS-001"
       ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "go_no_go": {
+        "message": "Go: sync-status CI gate validated for T-GS-003",
+        "received": true,
+        "received_at": "2026-03-08T21:13:52+00:00"
+      },
       "id": "T-GS-003",
       "milestone_id": "GATEFLOW-STANDARDIZATION-002",
-      "status": "Intake",
+      "status": "Done",
       "title": "Add CI sync-status gate against main baseline"
     },
     {
+      "actuals": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reopen_count": 0,
+        "tool_calls": 0,
+        "wall_time_sec": 0
+      },
       "depends_on": [
         "T-GS-003"
       ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "go_no_go": {
+        "message": "Go: validate-all CI gate validated for T-GS-004",
+        "received": true,
+        "received_at": "2026-03-08T21:13:53+00:00"
+      },
       "id": "T-GS-004",
       "milestone_id": "GATEFLOW-STANDARDIZATION-002",
-      "status": "Intake",
+      "status": "Done",
       "title": "Add planning validate-all gate with remediation output"
     },
     {
+      "actuals": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reopen_count": 0,
+        "tool_calls": 0,
+        "wall_time_sec": 0
+      },
       "depends_on": [
         "T-GS-002",
         "T-GS-003"
       ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "go_no_go": {
+        "message": "Go: operator workflow and recovery docs updated for T-GS-005",
+        "received": true,
+        "received_at": "2026-03-08T21:13:53+00:00"
+      },
       "id": "T-GS-005",
       "milestone_id": "GATEFLOW-STANDARDIZATION-002",
-      "status": "Intake",
+      "status": "Done",
       "title": "Update operator docs for mandatory branch sync workflow"
     },
     {
+      "actuals": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reopen_count": 0,
+        "tool_calls": 0,
+        "wall_time_sec": 0
+      },
       "depends_on": [
         "T-GS-004",
         "T-GS-005"
       ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "go_no_go": {
+        "message": "Go: rollout dry-run evidence and risks reviewed for T-GS-006",
+        "received": true,
+        "received_at": "2026-03-08T21:13:53+00:00"
+      },
       "id": "T-GS-006",
       "milestone_id": "GATEFLOW-STANDARDIZATION-002",
-      "status": "Intake",
+      "status": "Done",
       "title": "Run rollout dry-run and capture go/no-go evidence"
     }
   ],

@@ -33,6 +33,7 @@ def test_mutations_allowed_when_branch_not_protected(tmp_path: Path) -> None:
     _seed(tmp_path)
     config = json.loads((tmp_path / ".gateflow" / "config.json").read_text(encoding="utf-8"))
     config["policy"]["protected_branches"] = ["release"]
+    config["policy"]["require_sync_before_write"] = False
     _write_config(tmp_path, config)
 
     rc = main(["--root", str(tmp_path), "tasks", "create", "--body", '{"id":"T-1002"}'])
