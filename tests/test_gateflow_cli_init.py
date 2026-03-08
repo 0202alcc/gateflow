@@ -23,6 +23,19 @@ def test_init_scaffold_creates_core_files(tmp_path: Path) -> None:
     assert (gateflow / "closeout" / "metadata_refs.json").exists()
 
 
+def test_init_without_subcommand_defaults_to_scaffold_minimal(tmp_path: Path) -> None:
+    assert main(["--root", str(tmp_path), "init"]) == 0
+
+    gateflow = tmp_path / ".gateflow"
+    assert (gateflow / "config.json").exists()
+    assert (gateflow / "milestones.json").exists()
+    assert (gateflow / "tasks.json").exists()
+    assert (gateflow / "boards.json").exists()
+    assert (gateflow / "backlog.json").exists()
+    assert (gateflow / "closeout").is_dir()
+    assert (gateflow / "closeout" / "metadata_refs.json").exists()
+
+
 def test_init_scaffold_is_idempotent(tmp_path: Path) -> None:
     assert main(["--root", str(tmp_path), "init", "scaffold", "--profile", "minimal"]) == 0
     first = (tmp_path / ".gateflow" / "config.json").read_text(encoding="utf-8")

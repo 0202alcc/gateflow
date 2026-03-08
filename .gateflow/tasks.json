@@ -1,0 +1,248 @@
+{
+  "items": [
+    {
+      "actuals": {
+        "input_tokens": 1800,
+        "output_tokens": 920,
+        "reopen_count": 0,
+        "tool_calls": 14,
+        "wall_time_sec": 5400
+      },
+      "depends_on": [],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "id": "T-GB-001",
+      "milestone_id": "GATEFLOW-BACKEND-001",
+      "rfc": "docs/rfc/gateflow-backend-001-rfc.md",
+      "status": "Done",
+      "title": "Architecture and ADR for local backend mode"
+    },
+    {
+      "actuals": {
+        "input_tokens": 2200,
+        "output_tokens": 1100,
+        "reopen_count": 0,
+        "tool_calls": 16,
+        "wall_time_sec": 6200
+      },
+      "depends_on": [
+        "T-GB-001"
+      ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "id": "T-GB-002",
+      "milestone_id": "GATEFLOW-BACKEND-001",
+      "status": "Done",
+      "title": "Implement storage abstraction and SQLite backend core"
+    },
+    {
+      "actuals": {
+        "input_tokens": 1700,
+        "output_tokens": 900,
+        "reopen_count": 0,
+        "tool_calls": 12,
+        "wall_time_sec": 4800
+      },
+      "depends_on": [
+        "T-GB-002"
+      ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "id": "T-GB-003",
+      "milestone_id": "GATEFLOW-BACKEND-001",
+      "status": "Done",
+      "title": "Implement branch sync commands and metadata persistence"
+    },
+    {
+      "actuals": {
+        "input_tokens": 1300,
+        "output_tokens": 760,
+        "reopen_count": 0,
+        "tool_calls": 10,
+        "wall_time_sec": 3600
+      },
+      "depends_on": [
+        "T-GB-003"
+      ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "id": "T-GB-004",
+      "milestone_id": "GATEFLOW-BACKEND-001",
+      "status": "Done",
+      "title": "Add drift detector conflict report and local lock semantics"
+    },
+    {
+      "actuals": {
+        "input_tokens": 900,
+        "output_tokens": 520,
+        "reopen_count": 0,
+        "tool_calls": 7,
+        "wall_time_sec": 2400
+      },
+      "depends_on": [
+        "T-GB-003"
+      ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "id": "T-GB-005",
+      "milestone_id": "GATEFLOW-BACKEND-001",
+      "status": "Done",
+      "title": "Ship CLI compatibility shims and API transition warnings"
+    },
+    {
+      "actuals": {
+        "input_tokens": 1100,
+        "output_tokens": 600,
+        "reopen_count": 0,
+        "tool_calls": 8,
+        "wall_time_sec": 3000
+      },
+      "depends_on": [
+        "T-GB-002"
+      ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "id": "T-GB-006",
+      "milestone_id": "GATEFLOW-BACKEND-001",
+      "status": "Done",
+      "title": "Deliver import export migration path with rollback safety"
+    },
+    {
+      "actuals": {
+        "input_tokens": 1600,
+        "output_tokens": 820,
+        "reopen_count": 0,
+        "tool_calls": 11,
+        "wall_time_sec": 4200
+      },
+      "depends_on": [
+        "T-GB-004",
+        "T-GB-005",
+        "T-GB-006"
+      ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "id": "T-GB-007",
+      "milestone_id": "GATEFLOW-BACKEND-001",
+      "status": "Done",
+      "title": "Add integration tests for sync drift conflict and roundtrip"
+    },
+    {
+      "actuals": {
+        "input_tokens": 600,
+        "output_tokens": 340,
+        "reopen_count": 0,
+        "tool_calls": 5,
+        "wall_time_sec": 1800
+      },
+      "depends_on": [
+        "T-GB-007"
+      ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "id": "T-GB-008",
+      "milestone_id": "GATEFLOW-BACKEND-001",
+      "status": "Done",
+      "title": "Add backend mode smoke CI job"
+    },
+    {
+      "actuals": {
+        "input_tokens": 800,
+        "output_tokens": 540,
+        "reopen_count": 0,
+        "tool_calls": 6,
+        "wall_time_sec": 2100
+      },
+      "depends_on": [
+        "T-GB-006",
+        "T-GB-007"
+      ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "id": "T-GB-009",
+      "milestone_id": "GATEFLOW-BACKEND-001",
+      "status": "Done",
+      "title": "Write backend operator guide and recovery procedures"
+    },
+    {
+      "actuals": {
+        "input_tokens": 950,
+        "output_tokens": 580,
+        "reopen_count": 0,
+        "tool_calls": 7,
+        "wall_time_sec": 2500
+      },
+      "depends_on": [
+        "T-GB-009"
+      ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "id": "T-GB-010",
+      "milestone_id": "GATEFLOW-BACKEND-001",
+      "status": "Done",
+      "title": "Define phased rollout with risk register and go no-go gates"
+    }
+  ],
+  "updated_at": "2026-03-07",
+  "version": "gateflow_v1"
+}

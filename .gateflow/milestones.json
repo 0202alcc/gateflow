@@ -1,0 +1,23 @@
+{
+  "items": [
+    {
+      "id": "GATEFLOW-BACKEND-001",
+      "name": "Local backend-backed planning system",
+      "status": "Complete",
+      "task_ids": [
+        "T-GB-001",
+        "T-GB-002",
+        "T-GB-003",
+        "T-GB-004",
+        "T-GB-005",
+        "T-GB-006",
+        "T-GB-007",
+        "T-GB-008",
+        "T-GB-009",
+        "T-GB-010"
+      ]
+    }
+  ],
+  "updated_at": "2026-03-07",
+  "version": "gateflow_v1"
+}

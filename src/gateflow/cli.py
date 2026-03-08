@@ -36,7 +36,8 @@ def build_parser() -> argparse.ArgumentParser:
     sub = parser.add_subparsers(dest="command", required=True)
 
     init_p = sub.add_parser("init")
-    init_sub = init_p.add_subparsers(dest="init_action", required=True)
+    init_p.set_defaults(init_action="scaffold", profile="minimal")
+    init_sub = init_p.add_subparsers(dest="init_action", required=False)
     scaffold_p = init_sub.add_parser("scaffold")
     scaffold_p.add_argument("--profile", choices=["minimal", "discord", "enterprise"], default="minimal")
     init_sub.add_parser("doctor")
@@ -134,7 +135,7 @@ def main(argv: list[str] | None = None) -> int:
 
 def _dispatch(args: argparse.Namespace) -> int:
     if args.command == "init":
-        if args.init_action == "scaffold":
+        if args.init_action in (None, "scaffold"):
             created = scaffold_workspace(root=args.root, profile=args.profile)
             print(json.dumps({"status": "ok", "created": created}, indent=2, sort_keys=True))
             return 0
