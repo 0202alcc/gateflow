@@ -1,25 +1,41 @@
-# Backend Mode Operator Guide
+# Backend + Local-External Operator Guide
 
-## Enable Backend Mode
-1. Initialize workspace if needed:
+## Default Init Behavior
+New workspaces now default to `storage.mode=local-external` and write canonical state to an external SQLite DB.
+
+1. Initialize workspace:
 
 ```bash
 gateflow --root <repo> init scaffold --profile minimal
 ```
 
-2. Migrate ledgers into SQLite and flip source of truth:
+2. Check active connection + backend target:
+
+```bash
+gateflow --root <repo> connect status
+```
+
+3. Rebind to a known local DB path (recovery/continuity):
+
+```bash
+gateflow --root <repo> connect local --path <sqlite-db>
+```
+
+4. Remote contract stub (not implemented yet):
+
+```bash
+gateflow --root <repo> connect remote --url <endpoint> --workspace <name>
+```
+
+## Legacy Backend Mode
+Legacy repo-local backend mode is still supported:
 
 ```bash
 gateflow --root <repo> backend migrate --to backend
-```
-
-3. Verify mode:
-
-```bash
 gateflow --root <repo> backend status
 ```
 
-## Mandatory Branch Sync Workflow (Required Before Writes)
+## Mandatory Branch Sync Workflow (When Policy Enabled)
 Run this sequence before any `tasks|milestones|boards|backlog|config set|api POST/PATCH/DELETE|close` write:
 
 1. Capture canonical snapshot from `main`:
@@ -42,7 +58,7 @@ gateflow --root <repo> sync apply
 
 4. Mutate planning state only when `sync status` is `clean`.
 
-`policy.require_sync_before_write=true` is the canonical default. When drift exists, mutating commands return policy error `POLICY_SYNC_REQUIRED`.
+`policy.require_sync_before_write=true` remains supported. When drift exists, mutating commands return policy error `POLICY_SYNC_REQUIRED`.
 
 ## Export/Import Compatibility
 - Export backend state back to file ledgers:
@@ -51,7 +67,7 @@ gateflow --root <repo> sync apply
 gateflow --root <repo> backend export
 ```
 
-- Roll back fully to file mode:
+- Roll back fully to file mode (`storage.mode=file`):
 
 ```bash
 gateflow --root <repo> backend migrate --to file
@@ -68,11 +84,16 @@ gateflow --root <repo> backend migrate --to file
 - Review `drift.conflicts` and reconcile local work.
 - Run `sync apply` only after confirming overwrites are safe.
 
-3. Backend file corruption or rollback required:
-- `backend migrate --to file` to rehydrate ledgers.
-- Commit exported ledgers.
-- Continue in `file` mode while investigating.
+3. External/local backend recovery:
+- Rebind workspace: `connect local --path <known-db>`.
+- If needed, force rebind after explicit validation: `connect local --path <known-db> --force`.
+- Confirm active target with `connect status`.
 
-4. Lock contention on writes:
+4. Rollback to file-ledger source of truth:
+- `backend export` to refresh deterministic snapshots.
+- `backend migrate --to file`.
+- Continue in `storage.mode=file` while investigating.
+
+5. Lock contention on writes:
 - Retry command after short delay.
 - Ensure no stuck process is repeatedly writing GateFlow state.

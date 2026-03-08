@@ -18,9 +18,14 @@
       ]
     },
     {
+      "go_no_go": {
+        "message": "GO: local-external/connect scope delivered with tests + docs + CI smoke coverage",
+        "received": true,
+        "received_at": "2026-03-08T22:06:09+00:00"
+      },
       "id": "GATEFLOW-LOCAL-EXTERNAL-003",
       "name": "Local-external source-of-truth mode and connect workflow",
-      "status": "Planned",
+      "status": "Complete",
       "task_ids": [
         "T-GLE-001",
         "T-GLE-002",

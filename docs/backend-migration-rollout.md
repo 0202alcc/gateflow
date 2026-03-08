@@ -1,46 +1,45 @@
-# Backend Rollout, Success Criteria, and Risk Register
+# Local-External Rollout, Success Criteria, and Risk Register
 
 ## Phased Rollout
 
-### Phase 0: Warn-only
-- Keep `storage.mode=file`.
-- Run `sync from-main` + `sync status` on feature branches.
-- Keep `policy.require_sync_before_write=false`.
-- Record conflict frequency and remediation latency.
+### Phase 0: Pilot local-external
+- Initialize pilot repos with `gateflow init` (defaults to `storage.mode=local-external`).
+- Validate branch continuity via shared external DB.
+- Keep `policy.require_sync_before_write=false` until operators are trained on recovery flows.
 
-### Phase 1: Enforce sync-before-write
-- Allow selected branches/repos to run `backend migrate --to backend`.
+### Phase 1: Enforce sync-before-write in pilots
+- Keep `storage.mode=local-external`.
 - Set `policy.require_sync_before_write=true` in canonical config.
-- Verify export parity with `backend export`.
+- Verify deterministic export parity with `backend export`.
 - Require PR sync gate (`sync status` must be `clean`) and `validate all` gate.
 
-### Phase 2: Default backend mode
-- New scaffolds default to backend mode in selected environments.
+### Phase 2: Default local-external
+- New scaffolds default to local-external mode for all repos.
 - Keep `policy.require_sync_before_write=true` for all managed branches.
 - Track incident rate and rollback events.
 
-### Phase 3: Deprecate direct file writes
+### Phase 3: Deprecate ad-hoc backend mode transitions
 - Retain file export/import bridge for transition windows.
 - Announce deprecation window before removing direct file-only write path.
 
 ## Measurable Success Criteria
-- Deterministic roundtrip: `file -> backend -> file` has no semantic diff for managed resources.
+- Deterministic roundtrip: `local-external -> export -> file -> local-external` has no semantic diff for managed resources.
 - Sync stability: `sync status` is deterministic for identical state/commit input.
 - Conflict handling: conflict report includes actionable remediation commands.
 - Safety: write policy blocks drifted writes when enabled.
-- Compatibility: legacy CLI/API commands continue to function in both storage modes.
+- Compatibility: legacy CLI/API commands continue to function in `local-external`, `backend`, and `file`.
 
 ## Go/No-Go Checks
 Go criteria:
-- Backend smoke CI is green.
-- Integration tests pass for sync, drift, conflict remediation, and roundtrip parity.
+- Backend/local-external smoke CI is green.
+- Integration tests pass for branch continuity, rebind recovery, and deterministic roundtrip parity.
 - PR sync-status gate blocks drifted branches and prints remediation.
 - PR validate-all gate blocks invalid planning state and prints remediation.
 - Operator guide validated by at least one dry-run migration and rollback.
 - No unresolved P0/P1 data-loss issues.
 
 No-Go criteria:
-- Non-deterministic ordering observed in backend exports.
+- Non-deterministic ordering observed in local-external exports.
 - Sync apply overwrites without conflict visibility.
 - Policy enforcement can be bypassed in mutating paths.
 - Drifted PR branch can merge without sync remediation.
@@ -48,11 +47,11 @@ No-Go criteria:
 - Rollback (`backend migrate --to file`) fails to restore writable ledgers.
 
 ## Risk Register
-1. Data divergence between SQLite and JSON ledgers
+1. Data divergence between external SQLite and JSON ledgers
 - Impact: high
 - Mitigation: explicit import/export commands, parity tests, deterministic ordering.
 
-2. Accidental overwrite during `sync apply`
+2. Accidental overwrite during `sync apply` or forced rebind
 - Impact: high
 - Mitigation: `sync status` + conflict report before apply, policy-gated writes.
 
@@ -69,4 +68,4 @@ No-Go criteria:
 - Mitigation: keep file mode, keep export bridge, maintain API shim warnings.
 
 ## Rollout Recommendation
-Use a two-step rollout: warn-only (Phase 0) for one cycle, then enforce (Phase 1+) by default. Go for enforcement only when CI gates are stable, forced-failure drills are reproducible, and operators can recover with `sync from-main` -> `sync status` -> `sync apply` without escalation.
+Use a two-step rollout: pilot (Phase 0) for one cycle, then enforce (Phase 1+) by default. Go only when CI gates are stable and operators can recover with `connect local --path ...`, `backend export`, and `backend migrate --to file` without escalation.
