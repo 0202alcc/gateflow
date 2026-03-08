@@ -1,49 +1,40 @@
-# Pre-Release Notes: `v0.1.0a3`
+# Pre-Release Notes: `v0.1.0a4`
 
 ## Scope
 
-- Added explicit close commands:
-  - `gateflow close task <id> --heads-up "..."`
-  - `gateflow close milestone <id> --heads-up "..."`
-- Enforced closure prechecks:
-  - Go/No-Go heads-up required for task/milestone close.
-  - Task close blocks when dependencies are not done.
-  - Milestone close blocks when linked milestone tasks are not done.
-- Added deterministic close issue ledger at `.gateflow/closeout/closure_issues.json`.
-- Added `gateflow init` shorthand that defaults to `init scaffold --profile minimal`.
+- Added default `local-external` source-of-truth mode for new `gateflow init` workspaces.
+- Added deterministic workspace connection metadata in `.gateflow/connection.json`.
+- Added `gateflow connect` command surface:
+  - `connect local` implemented for explicit local DB rebinding.
+  - `connect remote` contract stub added for future hosted backends.
+- Updated backend smoke coverage and integration tests for local-external behavior.
+- Added planning packet/closeout artifacts for `GATEFLOW-LOCAL-EXTERNAL-003`.
 
 ## Publish Checklist
 
 1. Build artifacts:
 
 ```bash
-cd gateflow
-python3 -m build
+UV_CACHE_DIR=.uv-cache UV_TOOL_DIR=.uv-tools uv run --with build python -m build
 ```
 
-2. Smoke run from built wheel:
+2. Validate package metadata:
 
 ```bash
-UV_CACHE_DIR=../.uv-cache UV_TOOL_DIR=./.uv-tools uvx --from dist/gateflow-0.1.0a3-py3-none-any.whl gateflow --help
+UV_CACHE_DIR=.uv-cache UV_TOOL_DIR=.uv-tools uv run --with twine twine check dist/*
 ```
 
-3. Push Git tag:
+3. Upload to package index:
 
 ```bash
-git tag -a gateflow-v0.1.0a3 -m "gateflow pre-release v0.1.0a3"
-git push origin gateflow-v0.1.0a3
+UV_CACHE_DIR=.uv-cache UV_TOOL_DIR=.uv-tools uv run --with twine twine upload dist/*
 ```
 
-4. Validate package metadata:
+4. Push Git tag:
 
 ```bash
-python3 -m twine check dist/*
-```
-
-5. Upload to package index:
-
-```bash
-python3 -m twine upload dist/*
+git tag -a gateflow-v0.1.0a4 -m "gateflow pre-release v0.1.0a4"
+git push origin gateflow-v0.1.0a4
 ```
 
 ## Validation Evidence

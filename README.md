@@ -2,7 +2,7 @@
 
 Standalone GateFlow CLI package extracted from Luvatrix.
 
-Current pre-release version: `0.1.0a3`.
+Current pre-release version: `0.1.0a4`.
 
 ## Install and Run
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0a4 - 2026-03-08
+
+- Added `local-external` storage mode as default for new workspace initialization.
+- Added deterministic workspace connection metadata (`.gateflow/connection.json`) and external DB binding model.
+- Added `gateflow connect local` workflow and `connect remote` contract stub for future hosted backends.
+- Added local-external integration tests and backend smoke workflow coverage updates.
+- Added closeout packet and milestone/task packet for `GATEFLOW-LOCAL-EXTERNAL-003`.
+
 ## 0.1.0a3 - 2026-03-08
 
 - Added `gateflow close task` and `gateflow close milestone` commands with Go/No-Go heads-up enforcement.
