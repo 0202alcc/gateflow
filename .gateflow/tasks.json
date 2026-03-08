@@ -243,6 +243,79 @@
       "title": "Define phased rollout with risk register and go no-go gates"
     },
     {
+      "depends_on": [],
+      "id": "T-GLE-001",
+      "milestone_id": "GATEFLOW-LOCAL-EXTERNAL-003",
+      "packet": "docs/task-packets/gateflow-local-external-003-packet.md",
+      "status": "Intake",
+      "title": "Finalize local-external packet and acceptance criteria"
+    },
+    {
+      "depends_on": [
+        "T-GLE-001"
+      ],
+      "id": "T-GLE-002",
+      "milestone_id": "GATEFLOW-LOCAL-EXTERNAL-003",
+      "status": "Intake",
+      "title": "Add local-external storage mode and workspace identity model"
+    },
+    {
+      "depends_on": [
+        "T-GLE-002"
+      ],
+      "id": "T-GLE-003",
+      "milestone_id": "GATEFLOW-LOCAL-EXTERNAL-003",
+      "status": "Intake",
+      "title": "Change gateflow init to provision and bind external local DB"
+    },
+    {
+      "depends_on": [
+        "T-GLE-003"
+      ],
+      "id": "T-GLE-004",
+      "milestone_id": "GATEFLOW-LOCAL-EXTERNAL-003",
+      "status": "Intake",
+      "title": "Implement gateflow connect local binding and diagnostics"
+    },
+    {
+      "depends_on": [
+        "T-GLE-004"
+      ],
+      "id": "T-GLE-005",
+      "milestone_id": "GATEFLOW-LOCAL-EXTERNAL-003",
+      "status": "Intake",
+      "title": "Add gateflow connect remote contract stub and migration warnings"
+    },
+    {
+      "depends_on": [
+        "T-GLE-003"
+      ],
+      "id": "T-GLE-006",
+      "milestone_id": "GATEFLOW-LOCAL-EXTERNAL-003",
+      "status": "Intake",
+      "title": "Ensure deterministic export/import parity for local-external mode"
+    },
+    {
+      "depends_on": [
+        "T-GLE-004",
+        "T-GLE-005",
+        "T-GLE-006"
+      ],
+      "id": "T-GLE-007",
+      "milestone_id": "GATEFLOW-LOCAL-EXTERNAL-003",
+      "status": "Intake",
+      "title": "Add integration tests for branch continuity and rebind recovery"
+    },
+    {
+      "depends_on": [
+        "T-GLE-007"
+      ],
+      "id": "T-GLE-008",
+      "milestone_id": "GATEFLOW-LOCAL-EXTERNAL-003",
+      "status": "Intake",
+      "title": "Publish operator guide and rollout recommendation for local-external mode"
+    },
+    {
       "actuals": {
         "input_tokens": 0,
         "output_tokens": 0,
