@@ -7,6 +7,7 @@ from gateflow.config import set_config_value, show_config
 from gateflow.storage import (
     export_backend_to_json_ledgers,
     import_json_ledgers_to_backend,
+    resolve_configured_backend_sqlite_path,
     resolve_storage_mode,
 )
 
@@ -17,6 +18,7 @@ def backend_status(root: Path) -> dict[str, Any]:
     return {
         "mode": mode.mode,
         "sqlite_path": str(mode.sqlite_path),
+        "backend_target": "external-local-sqlite" if mode.mode == "local-external" else "repo-local-sqlite",
         "policy_require_sync_before_write": bool(config.get("policy", {}).get("require_sync_before_write", False)),
     }
 
@@ -31,12 +33,13 @@ def backend_migrate(root: Path, to_mode: str) -> dict[str, Any]:
         return {"status": "noop", "mode": mode.mode, "sqlite_path": str(mode.sqlite_path)}
 
     if to_mode == "backend":
-        import_json_ledgers_to_backend(root, mode.sqlite_path)
+        sqlite_path = resolve_configured_backend_sqlite_path(root)
+        import_json_ledgers_to_backend(root, sqlite_path)
         set_config_value(root, "storage.mode", '"backend"')
         return {
             "status": "ok",
             "mode": "backend",
-            "sqlite_path": str(mode.sqlite_path),
+            "sqlite_path": str(sqlite_path),
             "rollback": "gateflow backend migrate --to file",
         }
 

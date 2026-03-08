@@ -1,4 +1,4 @@
-# ADR 0001: Local Backend Mode for GateFlow
+# ADR 0001: Local Backend + Local-External Modes for GateFlow
 
 ## Status
 Accepted (implementation phase started in this change set).
@@ -7,10 +7,11 @@ Accepted (implementation phase started in this change set).
 GateFlow currently stores planning state in JSON ledgers under `.gateflow/`. This keeps workflows simple and local-first, but branch consistency depends on manual discipline. We need a canonical local store that supports deterministic branch sync while preserving offline usage and compatibility with existing CLI contracts.
 
 ## Decision
-GateFlow supports two explicit storage modes:
+GateFlow supports three explicit storage modes:
 
-- `file` mode (default): JSON ledgers remain source of truth.
-- `backend` mode: embedded SQLite (`.gateflow/gateflow.db` by default) is source of truth.
+- `file` mode: JSON ledgers remain source of truth.
+- `backend` mode: embedded repo-local SQLite (`.gateflow/gateflow.db`) is source of truth.
+- `local-external` mode (default for new init): external SQLite outside repo is source of truth, with repo connection metadata at `.gateflow/connection.json`.
 
 Mode is controlled via `config.storage.mode` and can be overridden with `GATEFLOW_STORAGE_MODE`.
 
@@ -53,7 +54,7 @@ This preserves deterministic export/import roundtrip and offline operation.
 ## Consequences
 Positive:
 
-- Canonical local state in backend mode.
+- Canonical local state in local-external/backend modes.
 - Deterministic branch sync primitives.
 - Better conflict visibility and safer writes.
 
@@ -67,6 +68,6 @@ Tradeoffs:
 2. Add backend migration/export commands and mode flags.
 3. Add sync/drift/apply commands with persisted metadata (source commit, timestamps, conflict summary).
 4. Enforce optional sync-before-write policy.
-5. Keep API shim contract; add compatibility warning when backend mode is active.
+5. Keep API shim contract; add compatibility warning when SQLite-backed mode is active.
 6. Add integration tests + CI smoke workflow for backend/sync.
 7. Publish operator, migration, and rollout docs.

@@ -333,6 +333,239 @@
         "success_criteria_met": true
       },
       "go_no_go": {
+        "message": "GO: implementation/test/docs evidence captured on codex/gateflow-local-external-packet",
+        "received": true,
+        "received_at": "2026-03-08T22:06:05+00:00"
+      },
+      "id": "T-GLE-001",
+      "milestone_id": "GATEFLOW-LOCAL-EXTERNAL-003",
+      "packet": "docs/task-packets/gateflow-local-external-003-packet.md",
+      "status": "Done",
+      "title": "Finalize local-external packet and acceptance criteria"
+    },
+    {
+      "actuals": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reopen_count": 0,
+        "tool_calls": 0,
+        "wall_time_sec": 0
+      },
+      "depends_on": [
+        "T-GLE-001"
+      ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "go_no_go": {
+        "message": "GO: implementation/test/docs evidence captured on codex/gateflow-local-external-packet",
+        "received": true,
+        "received_at": "2026-03-08T22:06:05+00:00"
+      },
+      "id": "T-GLE-002",
+      "milestone_id": "GATEFLOW-LOCAL-EXTERNAL-003",
+      "status": "Done",
+      "title": "Add local-external storage mode and workspace identity model"
+    },
+    {
+      "actuals": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reopen_count": 0,
+        "tool_calls": 0,
+        "wall_time_sec": 0
+      },
+      "depends_on": [
+        "T-GLE-002"
+      ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "go_no_go": {
+        "message": "GO: implementation/test/docs evidence captured on codex/gateflow-local-external-packet",
+        "received": true,
+        "received_at": "2026-03-08T22:06:06+00:00"
+      },
+      "id": "T-GLE-003",
+      "milestone_id": "GATEFLOW-LOCAL-EXTERNAL-003",
+      "status": "Done",
+      "title": "Change gateflow init to provision and bind external local DB"
+    },
+    {
+      "actuals": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reopen_count": 0,
+        "tool_calls": 0,
+        "wall_time_sec": 0
+      },
+      "depends_on": [
+        "T-GLE-003"
+      ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "go_no_go": {
+        "message": "GO: implementation/test/docs evidence captured on codex/gateflow-local-external-packet",
+        "received": true,
+        "received_at": "2026-03-08T22:06:06+00:00"
+      },
+      "id": "T-GLE-004",
+      "milestone_id": "GATEFLOW-LOCAL-EXTERNAL-003",
+      "status": "Done",
+      "title": "Implement gateflow connect local binding and diagnostics"
+    },
+    {
+      "actuals": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reopen_count": 0,
+        "tool_calls": 0,
+        "wall_time_sec": 0
+      },
+      "depends_on": [
+        "T-GLE-004"
+      ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "go_no_go": {
+        "message": "GO: implementation/test/docs evidence captured on codex/gateflow-local-external-packet",
+        "received": true,
+        "received_at": "2026-03-08T22:06:07+00:00"
+      },
+      "id": "T-GLE-005",
+      "milestone_id": "GATEFLOW-LOCAL-EXTERNAL-003",
+      "status": "Done",
+      "title": "Add gateflow connect remote contract stub and migration warnings"
+    },
+    {
+      "actuals": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reopen_count": 0,
+        "tool_calls": 0,
+        "wall_time_sec": 0
+      },
+      "depends_on": [
+        "T-GLE-003"
+      ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "go_no_go": {
+        "message": "GO: implementation/test/docs evidence captured on codex/gateflow-local-external-packet",
+        "received": true,
+        "received_at": "2026-03-08T22:06:08+00:00"
+      },
+      "id": "T-GLE-006",
+      "milestone_id": "GATEFLOW-LOCAL-EXTERNAL-003",
+      "status": "Done",
+      "title": "Ensure deterministic export/import parity for local-external mode"
+    },
+    {
+      "actuals": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reopen_count": 0,
+        "tool_calls": 0,
+        "wall_time_sec": 0
+      },
+      "depends_on": [
+        "T-GLE-004",
+        "T-GLE-005",
+        "T-GLE-006"
+      ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "go_no_go": {
+        "message": "GO: implementation/test/docs evidence captured on codex/gateflow-local-external-packet",
+        "received": true,
+        "received_at": "2026-03-08T22:06:08+00:00"
+      },
+      "id": "T-GLE-007",
+      "milestone_id": "GATEFLOW-LOCAL-EXTERNAL-003",
+      "status": "Done",
+      "title": "Add integration tests for branch continuity and rebind recovery"
+    },
+    {
+      "actuals": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reopen_count": 0,
+        "tool_calls": 0,
+        "wall_time_sec": 0
+      },
+      "depends_on": [
+        "T-GLE-007"
+      ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "go_no_go": {
+        "message": "GO: implementation/test/docs evidence captured on codex/gateflow-local-external-packet",
+        "received": true,
+        "received_at": "2026-03-08T22:06:09+00:00"
+      },
+      "id": "T-GLE-008",
+      "milestone_id": "GATEFLOW-LOCAL-EXTERNAL-003",
+      "status": "Done",
+      "title": "Publish operator guide and rollout recommendation for local-external mode"
+    },
+    {
+      "actuals": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reopen_count": 0,
+        "tool_calls": 0,
+        "wall_time_sec": 0
+      },
+      "depends_on": [],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "go_no_go": {
         "message": "Go: acceptance gates reviewed for T-GS-001",
         "received": true,
         "received_at": "2026-03-08T21:13:52+00:00"
