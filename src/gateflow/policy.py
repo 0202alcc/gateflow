@@ -44,6 +44,9 @@ def enforce_protected_branch_write_guard(root: Path) -> None:
 
 
 def enforce_sync_write_guard(root: Path) -> None:
+    # Sync enforcement is branch-based; skip when not in a Git worktree.
+    if _current_branch(root) is None:
+        return
     config = read_json(root / ".gateflow" / "config.json")
     policy = config.get("policy", {})
     if not isinstance(policy, dict):

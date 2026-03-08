@@ -19,7 +19,9 @@ gateflow --root <repo> backend migrate --to backend
 gateflow --root <repo> backend status
 ```
 
-## Branch Sync Workflow
+## Mandatory Branch Sync Workflow (Required Before Writes)
+Run this sequence before any `tasks|milestones|boards|backlog|config set|api POST/PATCH/DELETE|close` write:
+
 1. Capture canonical snapshot from `main`:
 
 ```bash
@@ -38,12 +40,9 @@ gateflow --root <repo> sync status
 gateflow --root <repo> sync apply
 ```
 
-## Enforce Writes Only When Synced
-```bash
-gateflow --root <repo> config set policy.require_sync_before_write true
-```
+4. Mutate planning state only when `sync status` is `clean`.
 
-When drift exists, mutating commands return policy error `POLICY_SYNC_REQUIRED`.
+`policy.require_sync_before_write=true` is the canonical default. When drift exists, mutating commands return policy error `POLICY_SYNC_REQUIRED`.
 
 ## Export/Import Compatibility
 - Export backend state back to file ledgers:
@@ -59,16 +58,21 @@ gateflow --root <repo> backend migrate --to file
 ```
 
 ## Recovery Procedures
-1. Drift unexpectedly high:
+1. Drifted write blocked (`POLICY_SYNC_REQUIRED`):
+- Run `sync from-main`, then `sync status`.
+- If drift exists, review `drift.conflicts` and run `sync apply`.
+- Re-run `sync status` and continue only when status is `clean`.
+
+2. Drift unexpectedly high:
 - Run `sync from-main`, then `sync status`.
 - Review `drift.conflicts` and reconcile local work.
 - Run `sync apply` only after confirming overwrites are safe.
 
-2. Backend file corruption or rollback required:
+3. Backend file corruption or rollback required:
 - `backend migrate --to file` to rehydrate ledgers.
 - Commit exported ledgers.
 - Continue in `file` mode while investigating.
 
-3. Lock contention on writes:
+4. Lock contention on writes:
 - Retry command after short delay.
 - Ensure no stuck process is repeatedly writing GateFlow state.

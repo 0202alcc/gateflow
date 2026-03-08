@@ -23,7 +23,7 @@ def scaffold_workspace(root: Path, profile: str) -> list[str]:
         "policy": {
             "protected_branches": ["main"],
             "protected_branch_patterns": [],
-            "require_sync_before_write": False,
+            "require_sync_before_write": True,
         },
         "profile": "minimal",
         "render": {"format": "md", "lane_mode": "milestone"},

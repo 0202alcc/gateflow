@@ -2,19 +2,21 @@
 
 ## Phased Rollout
 
-### Phase 0: Observe-only
+### Phase 0: Warn-only
 - Keep `storage.mode=file`.
 - Run `sync from-main` + `sync status` on feature branches.
+- Keep `policy.require_sync_before_write=false`.
 - Record conflict frequency and remediation latency.
 
-### Phase 1: Optional backend writes
+### Phase 1: Enforce sync-before-write
 - Allow selected branches/repos to run `backend migrate --to backend`.
-- Keep `policy.require_sync_before_write=false` by default.
+- Set `policy.require_sync_before_write=true` in canonical config.
 - Verify export parity with `backend export`.
+- Require PR sync gate (`sync status` must be `clean`) and `validate all` gate.
 
 ### Phase 2: Default backend mode
 - New scaffolds default to backend mode in selected environments.
-- Enable `policy.require_sync_before_write=true` for high-change branches.
+- Keep `policy.require_sync_before_write=true` for all managed branches.
 - Track incident rate and rollback events.
 
 ### Phase 3: Deprecate direct file writes
@@ -32,6 +34,8 @@
 Go criteria:
 - Backend smoke CI is green.
 - Integration tests pass for sync, drift, conflict remediation, and roundtrip parity.
+- PR sync-status gate blocks drifted branches and prints remediation.
+- PR validate-all gate blocks invalid planning state and prints remediation.
 - Operator guide validated by at least one dry-run migration and rollback.
 - No unresolved P0/P1 data-loss issues.
 
@@ -39,6 +43,8 @@ No-Go criteria:
 - Non-deterministic ordering observed in backend exports.
 - Sync apply overwrites without conflict visibility.
 - Policy enforcement can be bypassed in mutating paths.
+- Drifted PR branch can merge without sync remediation.
+- `gateflow validate all` failures can merge without remediation.
 - Rollback (`backend migrate --to file`) fails to restore writable ledgers.
 
 ## Risk Register
@@ -63,4 +69,4 @@ No-Go criteria:
 - Mitigation: keep file mode, keep export bridge, maintain API shim warnings.
 
 ## Rollout Recommendation
-Proceed to Phase 1 immediately with backend mode opt-in and required CI smoke gates. Promote to Phase 2 only after two consecutive release cycles with zero critical rollback incidents and deterministic parity checks passing on every release branch.
+Use a two-step rollout: warn-only (Phase 0) for one cycle, then enforce (Phase 1+) by default. Go for enforcement only when CI gates are stable, forced-failure drills are reproducible, and operators can recover with `sync from-main` -> `sync status` -> `sync apply` without escalation.

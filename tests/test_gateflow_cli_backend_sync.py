@@ -15,6 +15,13 @@ def _seed(root: Path) -> None:
     assert main(["--root", str(root), "init", "scaffold", "--profile", "minimal"]) == 0
 
 
+def _set_require_sync(root: Path, enabled: bool) -> None:
+    path = root / ".gateflow" / "config.json"
+    payload = _load(path)
+    payload["policy"]["require_sync_before_write"] = enabled
+    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
 def _git(*args: str, cwd: Path) -> None:
     subprocess.run(["git", *args], cwd=cwd, check=True, capture_output=True, text=True)
 
@@ -54,6 +61,7 @@ def test_sync_from_main_detects_drift_and_apply_resolves(tmp_path: Path, capsys)
     _seed(tmp_path)
     _ = capsys.readouterr()
     assert main(["--root", str(tmp_path), "config", "set", "policy.protected_branches", "[]"]) == 0
+    _set_require_sync(tmp_path, False)
     _ = capsys.readouterr()
     _git("init", "-b", "main", cwd=tmp_path)
     _git("config", "user.email", "dev@example.com", cwd=tmp_path)
@@ -75,6 +83,11 @@ def test_sync_from_main_detects_drift_and_apply_resolves(tmp_path: Path, capsys)
     assert main(["--root", str(tmp_path), "sync", "status"]) == 0
     status = _capture_json(capsys)
     assert status["status"] == "drifted"
+    assert status["remediation"] == [
+        "gateflow sync from-main",
+        "gateflow sync status",
+        "gateflow sync apply",
+    ]
 
     assert main(["--root", str(tmp_path), "sync", "apply"]) == 0
     apply_payload = _capture_json(capsys)
@@ -89,6 +102,7 @@ def test_require_sync_policy_blocks_writes_until_clean(tmp_path: Path, capsys) -
     _seed(tmp_path)
     _ = capsys.readouterr()
     assert main(["--root", str(tmp_path), "config", "set", "policy.protected_branches", "[]"]) == 0
+    _set_require_sync(tmp_path, False)
     _ = capsys.readouterr()
     _git("init", "-b", "main", cwd=tmp_path)
     _git("config", "user.email", "dev@example.com", cwd=tmp_path)

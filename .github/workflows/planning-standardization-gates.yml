@@ -1,0 +1,71 @@
+name: planning-standardization-gates
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  planning-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install gateflow
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Capture baseline from main
+        run: |
+          git fetch origin main --depth=1
+          gateflow --root . sync from-main
+
+      - name: Fail when branch planning state is drifted
+        run: |
+          python - <<'PY'
+          import json
+          import subprocess
+          import sys
+
+          result = subprocess.run(
+              ["gateflow", "--root", ".", "sync", "status"],
+              check=False,
+              capture_output=True,
+              text=True,
+          )
+          if result.stdout:
+              print(result.stdout, end="")
+          if result.returncode != 0:
+              if result.stderr:
+                  print(result.stderr, file=sys.stderr, end="")
+              sys.exit(result.returncode)
+
+          payload = json.loads(result.stdout)
+          if payload.get("status") != "clean":
+              print("sync gate failed: branch planning state is drifted from main baseline")
+              print("remediation:")
+              print("  gateflow --root . sync from-main")
+              print("  gateflow --root . sync status")
+              print("  gateflow --root . sync apply")
+              sys.exit(1)
+          PY
+
+      - name: Fail on planning validation errors
+        run: |
+          if ! gateflow --root . validate all; then
+            echo "validate-all gate failed"
+            echo "remediation:"
+            echo "  gateflow --root . sync from-main"
+            echo "  gateflow --root . sync status"
+            echo "  gateflow --root . sync apply"
+            echo "  gateflow --root . validate all"
+            exit 1
+          fi

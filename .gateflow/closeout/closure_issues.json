@@ -1,0 +1,14 @@
+{
+  "items": [
+    {
+      "code": "TASKS_NOT_DONE",
+      "created_at": "2026-03-08T21:13:29+00:00",
+      "entity_id": "GATEFLOW-STANDARDIZATION-002",
+      "entity_type": "milestone",
+      "message": "Milestone close blocked: tasks not done (T-GS-001, T-GS-002, T-GS-003, T-GS-004, T-GS-005, T-GS-006).",
+      "remediation": "Close all milestone tasks, then retry milestone close."
+    }
+  ],
+  "updated_at": "2026-03-08T21:13:29+00:00",
+  "version": "gateflow_v1"
+}

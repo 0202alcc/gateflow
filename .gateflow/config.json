@@ -9,7 +9,7 @@
     "protected_branches": [
       "main"
     ],
-    "require_sync_before_write": false
+    "require_sync_before_write": true
   },
   "profile": "minimal",
   "profiles": {},

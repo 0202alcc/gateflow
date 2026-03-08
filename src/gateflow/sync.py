@@ -75,8 +75,8 @@ def sync_status(root: Path) -> dict[str, Any]:
         },
         "remediation": [
             "gateflow sync from-main",
-            "gateflow sync apply",
             "gateflow sync status",
+            "gateflow sync apply",
         ],
     }
 
