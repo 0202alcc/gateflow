@@ -8,6 +8,7 @@ from typing import Any
 from gateflow import __version__
 from gateflow.api_shim import execute_api
 from gateflow.backend import backend_export, backend_migrate, backend_status
+from gateflow.close import CloseCommandError, close_milestone, close_task
 from gateflow.config import get_config_value, set_config_value, show_config
 from gateflow.import_luvatrix import check_luvatrix_import_drift, import_luvatrix
 from gateflow.policy import PolicyViolation, enforce_protected_branch_write_guard, enforce_sync_write_guard
@@ -107,6 +108,15 @@ def build_parser() -> argparse.ArgumentParser:
     sync_sub.add_parser("status")
     sync_sub.add_parser("apply")
 
+    close_p = sub.add_parser("close")
+    close_sub = close_p.add_subparsers(dest="close_action", required=True)
+    close_task_p = close_sub.add_parser("task")
+    close_task_p.add_argument("item_id")
+    close_task_p.add_argument("--heads-up", help="Go/No-Go acknowledgement message.")
+    close_milestone_p = close_sub.add_parser("milestone")
+    close_milestone_p.add_argument("item_id")
+    close_milestone_p.add_argument("--heads-up", help="Go/No-Go acknowledgement message.")
+
     return parser
 
 
@@ -125,6 +135,9 @@ def main(argv: list[str] | None = None) -> int:
     except SyncError as exc:
         _emit_error(json_mode=args.json_errors, error_type="sync", exit_code=3, message=str(exc), errors=[str(exc)])
         return 3
+    except CloseCommandError as exc:
+        _emit_error(json_mode=args.json_errors, error_type="close", exit_code=2, message=str(exc), errors=[str(exc)])
+        return 2
     except (ResourceError, FileNotFoundError, json.JSONDecodeError, ValueError) as exc:
         _emit_error(json_mode=args.json_errors, error_type="validation", exit_code=2, message=str(exc), errors=[str(exc)])
         return 2
@@ -219,6 +232,18 @@ def _dispatch(args: argparse.Namespace) -> int:
             print(json.dumps(sync_apply(args.root), indent=2, sort_keys=True))
             return 0
         raise ValueError(f"unsupported sync action: {args.sync_action}")
+
+    if args.command == "close":
+        workspace = GateflowWorkspace(args.root)
+        if args.close_action == "task":
+            _enforce_write_policies(args.root)
+            print(json.dumps(close_task(workspace, args.item_id, args.heads_up), indent=2, sort_keys=True))
+            return 0
+        if args.close_action == "milestone":
+            _enforce_write_policies(args.root)
+            print(json.dumps(close_milestone(workspace, args.item_id, args.heads_up), indent=2, sort_keys=True))
+            return 0
+        raise ValueError(f"unsupported close action: {args.close_action}")
 
     workspace = GateflowWorkspace(args.root)
     resource = dict(RESOURCES)[args.command]

@@ -38,6 +38,7 @@ def scaffold_workspace(root: Path, profile: str) -> list[str]:
     created.extend(_ensure_json(gateflow_dir / "boards.json", _empty_ledger(stamped)))
     created.extend(_ensure_json(gateflow_dir / "backlog.json", _empty_ledger(stamped)))
     created.extend(_ensure_json(closeout_dir / "metadata_refs.json", _empty_ledger(stamped)))
+    created.extend(_ensure_json(closeout_dir / "closure_issues.json", _empty_ledger(stamped)))
     return created
 
 
@@ -50,6 +51,7 @@ def doctor_workspace(root: Path) -> dict[str, object]:
         "boards.json",
         "backlog.json",
         "closeout/metadata_refs.json",
+        "closeout/closure_issues.json",
         "closeout",
     ]
     missing = [name for name in expected if not (gateflow_dir / name).exists()]

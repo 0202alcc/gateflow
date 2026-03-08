@@ -41,6 +41,7 @@ The standalone CLI exposes the extracted command groups:
 - `import-luvatrix`
 - `backend`
 - `sync`
+- `close`
 - `milestones`
 - `tasks`
 - `boards`

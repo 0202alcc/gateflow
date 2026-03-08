@@ -21,6 +21,7 @@ def test_init_scaffold_creates_core_files(tmp_path: Path) -> None:
     assert (gateflow / "backlog.json").exists()
     assert (gateflow / "closeout").is_dir()
     assert (gateflow / "closeout" / "metadata_refs.json").exists()
+    assert (gateflow / "closeout" / "closure_issues.json").exists()
 
 
 def test_init_without_subcommand_defaults_to_scaffold_minimal(tmp_path: Path) -> None:
@@ -34,6 +35,7 @@ def test_init_without_subcommand_defaults_to_scaffold_minimal(tmp_path: Path) ->
     assert (gateflow / "backlog.json").exists()
     assert (gateflow / "closeout").is_dir()
     assert (gateflow / "closeout" / "metadata_refs.json").exists()
+    assert (gateflow / "closeout" / "closure_issues.json").exists()
 
 
 def test_init_scaffold_is_idempotent(tmp_path: Path) -> None:
