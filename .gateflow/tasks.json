@@ -649,6 +649,71 @@
       "milestone_id": "GATEFLOW-STANDARDIZATION-002",
       "status": "Done",
       "title": "Run rollout dry-run and capture go/no-go evidence"
+    },
+    {
+      "depends_on": [],
+      "id": "T-GV1-001",
+      "milestone_id": "GATEFLOW-V1-004",
+      "packet": "docs/task-packets/gateflow-v1-004-packet.md",
+      "status": "Intake",
+      "title": "Finalize v1 packet and acceptance criteria"
+    },
+    {
+      "depends_on": [
+        "T-GV1-001"
+      ],
+      "id": "T-GV1-002",
+      "milestone_id": "GATEFLOW-V1-004",
+      "status": "Intake",
+      "title": "Lock v1 CLI/API compatibility contract and deprecation window"
+    },
+    {
+      "depends_on": [
+        "T-GV1-001"
+      ],
+      "id": "T-GV1-003",
+      "milestone_id": "GATEFLOW-V1-004",
+      "status": "Intake",
+      "title": "Add migration and rollback test matrix across all storage modes"
+    },
+    {
+      "depends_on": [
+        "T-GV1-002",
+        "T-GV1-003"
+      ],
+      "id": "T-GV1-004",
+      "milestone_id": "GATEFLOW-V1-004",
+      "status": "Intake",
+      "title": "Enforce planning standardization gates in branch protection"
+    },
+    {
+      "depends_on": [
+        "T-GV1-003"
+      ],
+      "id": "T-GV1-005",
+      "milestone_id": "GATEFLOW-V1-004",
+      "status": "Intake",
+      "title": "Harden v1 packaging pipeline and reproducible artifact checks"
+    },
+    {
+      "depends_on": [
+        "T-GV1-003"
+      ],
+      "id": "T-GV1-006",
+      "milestone_id": "GATEFLOW-V1-004",
+      "status": "Intake",
+      "title": "Finalize operator runbooks and recovery procedures for v1"
+    },
+    {
+      "depends_on": [
+        "T-GV1-004",
+        "T-GV1-005",
+        "T-GV1-006"
+      ],
+      "id": "T-GV1-007",
+      "milestone_id": "GATEFLOW-V1-004",
+      "status": "Intake",
+      "title": "Execute release candidate dry-run and issue final GO/NO-GO recommendation"
     }
   ],
   "updated_at": "2026-03-07",

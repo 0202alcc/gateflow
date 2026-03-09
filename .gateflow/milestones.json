@@ -54,6 +54,20 @@
         "T-GS-005",
         "T-GS-006"
       ]
+    },
+    {
+      "id": "GATEFLOW-V1-004",
+      "name": "GateFlow v1.0.0 hardening and release readiness",
+      "status": "Planned",
+      "task_ids": [
+        "T-GV1-001",
+        "T-GV1-002",
+        "T-GV1-003",
+        "T-GV1-004",
+        "T-GV1-005",
+        "T-GV1-006",
+        "T-GV1-007"
+      ]
     }
   ],
   "updated_at": "2026-03-07",
