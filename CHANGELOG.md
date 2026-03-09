@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.0 - 2026-03-09
+
+- Locked v1 CLI/API compatibility contract and deprecation/support policy.
+- Added deterministic migration/rollback matrix coverage across `file`, `backend`, and `local-external`.
+- Added failure-path recovery coverage for sync metadata and workspace rebind mismatch scenarios.
+- Added reproducible artifact and install-smoke CI workflow (`uv`, `pipx`, `wheel`, `sdist`).
+- Finalized v1 operator runbooks, troubleshooting matrix, and release guidance.
+- Added branch protection evidence template and v1 final risk register.
+
 ## 0.1.0a4 - 2026-03-08
 
 - Added `local-external` storage mode as default for new workspace initialization.

@@ -1,14 +1,12 @@
-# Pre-Release Notes: `v0.1.0a4`
+# Release Notes: `v1.0.0`
 
 ## Scope
 
-- Added default `local-external` source-of-truth mode for new `gateflow init` workspaces.
-- Added deterministic workspace connection metadata in `.gateflow/connection.json`.
-- Added `gateflow connect` command surface:
-  - `connect local` implemented for explicit local DB rebinding.
-  - `connect remote` contract stub added for future hosted backends.
-- Updated backend smoke coverage and integration tests for local-external behavior.
-- Added planning packet/closeout artifacts for `GATEFLOW-LOCAL-EXTERNAL-003`.
+- v1 contract lock for CLI/API behavior, error contracts, and storage-mode parity.
+- Deterministic migration/rollback matrix validated across `file`, `backend`, and `local-external`.
+- Planning standardization gates enforced in CI + branch protection.
+- Reproducible packaging pipeline and install smoke paths (`uv`, `pipx`, wheel/sdist).
+- Finalized operator runbooks with sync/drift/connect/storage rollback playbooks.
 
 ## Publish Checklist
 
@@ -24,31 +22,24 @@ UV_CACHE_DIR=.uv-cache UV_TOOL_DIR=.uv-tools uv run --with build python -m build
 UV_CACHE_DIR=.uv-cache UV_TOOL_DIR=.uv-tools uv run --with twine twine check dist/*
 ```
 
-3. Upload to package index:
+3. Smoke install paths:
 
 ```bash
-UV_CACHE_DIR=.uv-cache UV_TOOL_DIR=.uv-tools uv run --with twine twine upload dist/*
+UV_CACHE_DIR=.uv-cache UV_TOOL_DIR=.uv-tools uvx --from dist/*.whl gateflow --version
+pipx install --force dist/*.whl
+gateflow --version
 ```
 
-4. Push Git tag:
+4. Tag guidance:
 
 ```bash
-git tag -a gateflow-v0.1.0a4 -m "gateflow pre-release v0.1.0a4"
-git push origin gateflow-v0.1.0a4
+git tag -a gateflow-v1.0.0 -m "gateflow v1.0.0"
+git push origin gateflow-v1.0.0
 ```
 
 ## Validation Evidence
 
-- `PYTHONPATH=src python3 -m pytest tests -q`
-- `PYTHONPATH=src python3 -m gateflow.cli --help`
-
-## Install Paths
-
-```bash
-pipx install gateflow
-gateflow --help
-```
-
-```bash
-uvx --from ./gateflow gateflow --help
-```
+- `uv run pytest tests/test_gateflow_cli_backend_sync.py -q`
+- `uv run pytest tests/test_gateflow_cli_connect_local_external.py -q`
+- `uv run pytest tests/test_gateflow_cli_migration_matrix_v1.py -q`
+- `uv run pytest tests/test_gateflow_cli_close.py -q`

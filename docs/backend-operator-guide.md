@@ -1,7 +1,7 @@
-# Backend + Local-External Operator Guide
+# Backend + Local-External Operator Guide (v1)
 
 ## Default Init Behavior
-New workspaces now default to `storage.mode=local-external` and write canonical state to an external SQLite DB.
+New workspaces default to `storage.mode=local-external` and write canonical state to an external SQLite DB.
 
 1. Initialize workspace:
 
@@ -15,85 +15,63 @@ gateflow --root <repo> init scaffold --profile minimal
 gateflow --root <repo> connect status
 ```
 
-3. Rebind to a known local DB path (recovery/continuity):
+3. Rebind to known local DB path (continuity/recovery):
 
 ```bash
 gateflow --root <repo> connect local --path <sqlite-db>
 ```
 
-4. Remote contract stub (not implemented yet):
+4. Remote contract stub (not implemented in v1):
 
 ```bash
 gateflow --root <repo> connect remote --url <endpoint> --workspace <name>
 ```
 
-## Legacy Backend Mode
-Legacy repo-local backend mode is still supported:
-
-```bash
-gateflow --root <repo> backend migrate --to backend
-gateflow --root <repo> backend status
-```
-
-## Mandatory Branch Sync Workflow (When Policy Enabled)
-Run this sequence before any `tasks|milestones|boards|backlog|config set|api POST/PATCH/DELETE|close` write:
-
-1. Capture canonical snapshot from `main`:
+## Mandatory Sync Workflow (policy enabled)
+Run before mutating writes (`tasks|milestones|boards|backlog|config set|api POST/PATCH/DELETE|close`):
 
 ```bash
 gateflow --root <repo> sync from-main
-```
-
-2. Inspect drift/conflicts:
-
-```bash
 gateflow --root <repo> sync status
-```
-
-3. Apply canonical baseline on branch when required:
-
-```bash
 gateflow --root <repo> sync apply
 ```
 
-4. Mutate planning state only when `sync status` is `clean`.
+When `policy.require_sync_before_write=true`, drifted writes fail with `POLICY_SYNC_REQUIRED`.
 
-`policy.require_sync_before_write=true` remains supported. When drift exists, mutating commands return policy error `POLICY_SYNC_REQUIRED`.
+## Rollback Playbooks
 
-## Export/Import Compatibility
-- Export backend state back to file ledgers:
+### Playbook A: Roll back to file-ledger mode
 
 ```bash
 gateflow --root <repo> backend export
+gateflow --root <repo> backend migrate --to file
+gateflow --root <repo> validate all
 ```
 
-- Roll back fully to file mode (`storage.mode=file`):
+### Playbook B: Recover wrong local-external binding
 
 ```bash
-gateflow --root <repo> backend migrate --to file
+gateflow --root <repo> connect status
+gateflow --root <repo> connect local --path <expected-db>
+# emergency only:
+gateflow --root <repo> connect local --path <expected-db> --force
 ```
 
-## Recovery Procedures
-1. Drifted write blocked (`POLICY_SYNC_REQUIRED`):
-- Run `sync from-main`, then `sync status`.
-- If drift exists, review `drift.conflicts` and run `sync apply`.
-- Re-run `sync status` and continue only when status is `clean`.
+### Playbook C: Recover sync metadata failures
 
-2. Drift unexpectedly high:
-- Run `sync from-main`, then `sync status`.
-- Review `drift.conflicts` and reconcile local work.
-- Run `sync apply` only after confirming overwrites are safe.
+```bash
+gateflow --root <repo> sync from-main
+gateflow --root <repo> sync status
+gateflow --root <repo> sync apply
+```
 
-3. External/local backend recovery:
-- Rebind workspace: `connect local --path <known-db>`.
-- If needed, force rebind after explicit validation: `connect local --path <known-db> --force`.
-- Confirm active target with `connect status`.
+## Troubleshooting Matrix
 
-4. Rollback to file-ledger source of truth:
-- `backend export` to refresh deterministic snapshots.
-- `backend migrate --to file`.
-- Continue in `storage.mode=file` while investigating.
-
-5. Lock contention on writes:
-- Retry command after short delay.
-- Ensure no stuck process is repeatedly writing GateFlow state.
+| Symptom | Likely Cause | Recovery |
+|---|---|---|
+| `POLICY_SYNC_REQUIRED` on write | branch drift while sync policy enabled | `sync from-main`, `sync status`, `sync apply` |
+| `sync metadata missing` | baseline not captured yet | `sync from-main` then re-run command |
+| `sync metadata is invalid` | stale/corrupt sync meta | recapture with `sync from-main` |
+| `target DB ... different workspace_id` | attempted bind to foreign DB | rebind expected DB or use `--force` only for controlled recovery |
+| validation fails after migration | incomplete/mismatched transition | `backend export`, inspect ledgers, re-run migration path |
+| lock timeout on write | concurrent writer lock contention | retry after delay; stop stuck writer process |

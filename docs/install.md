@@ -2,31 +2,31 @@
 
 ## uvx
 
-Run directly from source checkout:
+Run from source checkout:
 
 ```bash
-uvx --from ./gateflow gateflow --help
+uvx --from ./ gateflow --help
 ```
 
-Run a command against a workspace:
+Run against a workspace:
 
 ```bash
-uvx --from ./gateflow gateflow --root /path/to/workspace validate all
+uvx --from ./ gateflow --root /path/to/workspace validate all
 ```
 
-## pipx (planned publishing path)
+## pipx
 
 ```bash
 pipx install gateflow
 gateflow --help
 ```
 
-`pipx` works once pre-release artifacts are published.
-
-## Build and smoke-check wheel/sdist
+## Build + smoke-check wheel/sdist
 
 ```bash
-cd gateflow
-uv run python -m build
-uvx --from dist/*.whl gateflow --help
+uv run --with build python -m build
+uv run --with twine twine check dist/*
+uvx --from dist/*.whl gateflow --version
+pipx install --force dist/*.whl
+gateflow --version
 ```

@@ -1,0 +1,79 @@
+name: release-reproducibility
+
+on:
+  push:
+    branches:
+      - main
+      - 'codex/**'
+  pull_request:
+
+jobs:
+  reproducible-artifacts:
+    runs-on: ubuntu-latest
+    env:
+      PIP_DISABLE_PIP_VERSION_CHECK: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install build tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine uv pipx
+
+      - name: Build artifacts (pass 1)
+        run: |
+          rm -rf dist build
+          export SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
+          python -m build
+          mkdir -p /tmp/dist-pass-1
+          cp dist/* /tmp/dist-pass-1/
+
+      - name: Build artifacts (pass 2)
+        run: |
+          rm -rf dist build
+          export SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
+          python -m build
+          mkdir -p /tmp/dist-pass-2
+          cp dist/* /tmp/dist-pass-2/
+
+      - name: Verify deterministic wheel + sdist contents
+        run: |
+          wheel_hash_1=$(sha256sum /tmp/dist-pass-1/*.whl | awk '{print $1}')
+          wheel_hash_2=$(sha256sum /tmp/dist-pass-2/*.whl | awk '{print $1}')
+          test "$wheel_hash_1" = "$wheel_hash_2"
+          printf '%s\n' "$wheel_hash_1" > /tmp/pass1-wheel.sha256
+          printf '%s\n' "$wheel_hash_2" > /tmp/pass2-wheel.sha256
+
+          mkdir -p /tmp/sdist-pass1 /tmp/sdist-pass2
+          tar -xzf /tmp/dist-pass-1/*.tar.gz -C /tmp/sdist-pass1
+          tar -xzf /tmp/dist-pass-2/*.tar.gz -C /tmp/sdist-pass2
+          sdist_root_1=$(find /tmp/sdist-pass1 -mindepth 1 -maxdepth 1 -type d | head -n1)
+          sdist_root_2=$(find /tmp/sdist-pass2 -mindepth 1 -maxdepth 1 -type d | head -n1)
+          (cd "$sdist_root_1" && find . -type f -print0 | sort -z | xargs -0 sha256sum) > /tmp/pass1-sdist-contents.sha256
+          (cd "$sdist_root_2" && find . -type f -print0 | sort -z | xargs -0 sha256sum) > /tmp/pass2-sdist-contents.sha256
+          diff -u /tmp/pass1-sdist-contents.sha256 /tmp/pass2-sdist-contents.sha256
+
+      - name: Validate metadata
+        run: |
+          twine check /tmp/dist-pass-1/*
+
+      - name: Smoke install with uvx and pipx
+        run: |
+          uvx --from /tmp/dist-pass-1/*.whl gateflow --version
+          pipx install --force /tmp/dist-pass-1/*.whl
+          gateflow --version
+
+      - name: Upload reproducibility artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: gateflow-dist-hashes
+          path: |
+            /tmp/dist-pass-1/*
+            /tmp/pass1-wheel.sha256
+            /tmp/pass2-wheel.sha256
+            /tmp/pass1-sdist-contents.sha256
+            /tmp/pass2-sdist-contents.sha256

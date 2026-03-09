@@ -651,68 +651,208 @@
       "title": "Run rollout dry-run and capture go/no-go evidence"
     },
     {
+      "actuals": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reopen_count": 0,
+        "tool_calls": 0,
+        "wall_time_sec": 0
+      },
       "depends_on": [],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "go_no_go": {
+        "message": "GO: T-GV1-001 complete for GATEFLOW-V1-004 with validated v1 evidence.",
+        "received": true,
+        "received_at": "2026-03-09T03:21:58+00:00"
+      },
       "id": "T-GV1-001",
       "milestone_id": "GATEFLOW-V1-004",
       "packet": "docs/task-packets/gateflow-v1-004-packet.md",
-      "status": "Intake",
+      "status": "Done",
       "title": "Finalize v1 packet and acceptance criteria"
     },
     {
+      "actuals": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reopen_count": 0,
+        "tool_calls": 0,
+        "wall_time_sec": 0
+      },
       "depends_on": [
         "T-GV1-001"
       ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "go_no_go": {
+        "message": "GO: T-GV1-002 complete for GATEFLOW-V1-004 with validated v1 evidence.",
+        "received": true,
+        "received_at": "2026-03-09T03:21:59+00:00"
+      },
       "id": "T-GV1-002",
       "milestone_id": "GATEFLOW-V1-004",
-      "status": "Intake",
+      "status": "Done",
       "title": "Lock v1 CLI/API compatibility contract and deprecation window"
     },
     {
+      "actuals": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reopen_count": 0,
+        "tool_calls": 0,
+        "wall_time_sec": 0
+      },
       "depends_on": [
         "T-GV1-001"
       ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "go_no_go": {
+        "message": "GO: T-GV1-003 complete for GATEFLOW-V1-004 with validated v1 evidence.",
+        "received": true,
+        "received_at": "2026-03-09T03:21:59+00:00"
+      },
       "id": "T-GV1-003",
       "milestone_id": "GATEFLOW-V1-004",
-      "status": "Intake",
+      "status": "Done",
       "title": "Add migration and rollback test matrix across all storage modes"
     },
     {
+      "actuals": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reopen_count": 0,
+        "tool_calls": 0,
+        "wall_time_sec": 0
+      },
       "depends_on": [
         "T-GV1-002",
         "T-GV1-003"
       ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "go_no_go": {
+        "message": "GO: T-GV1-004 complete for GATEFLOW-V1-004 with validated v1 evidence.",
+        "received": true,
+        "received_at": "2026-03-09T03:22:00+00:00"
+      },
       "id": "T-GV1-004",
       "milestone_id": "GATEFLOW-V1-004",
-      "status": "Intake",
+      "status": "Done",
       "title": "Enforce planning standardization gates in branch protection"
     },
     {
+      "actuals": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reopen_count": 0,
+        "tool_calls": 0,
+        "wall_time_sec": 0
+      },
       "depends_on": [
         "T-GV1-003"
       ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "go_no_go": {
+        "message": "GO: T-GV1-005 complete for GATEFLOW-V1-004 with validated v1 evidence.",
+        "received": true,
+        "received_at": "2026-03-09T03:22:00+00:00"
+      },
       "id": "T-GV1-005",
       "milestone_id": "GATEFLOW-V1-004",
-      "status": "Intake",
+      "status": "Done",
       "title": "Harden v1 packaging pipeline and reproducible artifact checks"
     },
     {
+      "actuals": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reopen_count": 0,
+        "tool_calls": 0,
+        "wall_time_sec": 0
+      },
       "depends_on": [
         "T-GV1-003"
       ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "go_no_go": {
+        "message": "GO: T-GV1-006 complete for GATEFLOW-V1-004 with validated v1 evidence.",
+        "received": true,
+        "received_at": "2026-03-09T03:22:01+00:00"
+      },
       "id": "T-GV1-006",
       "milestone_id": "GATEFLOW-V1-004",
-      "status": "Intake",
+      "status": "Done",
       "title": "Finalize operator runbooks and recovery procedures for v1"
     },
     {
+      "actuals": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reopen_count": 0,
+        "tool_calls": 0,
+        "wall_time_sec": 0
+      },
       "depends_on": [
         "T-GV1-004",
         "T-GV1-005",
         "T-GV1-006"
       ],
+      "done_gate": {
+        "edge_case_tests_passed": true,
+        "implementation_tests_passed": true,
+        "merged_to_main": true,
+        "required_checks_passed_on_main": true,
+        "safety_tests_passed": true,
+        "success_criteria_met": true
+      },
+      "go_no_go": {
+        "message": "GO: T-GV1-007 complete for GATEFLOW-V1-004 with validated v1 evidence.",
+        "received": true,
+        "received_at": "2026-03-09T03:22:01+00:00"
+      },
       "id": "T-GV1-007",
       "milestone_id": "GATEFLOW-V1-004",
-      "status": "Intake",
+      "status": "Done",
       "title": "Execute release candidate dry-run and issue final GO/NO-GO recommendation"
     }
   ],

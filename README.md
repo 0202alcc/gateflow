@@ -2,27 +2,24 @@
 
 Standalone GateFlow CLI package extracted from Luvatrix.
 
-Current pre-release version: `0.1.0a4`.
+Current release version: `1.0.0`.
 
 ## Install and Run
 
-### `uvx` (current pre-release workflow)
+### `uvx`
 
 ```bash
-UV_CACHE_DIR=./.uv-cache UV_TOOL_DIR=./gateflow/.uv-tools uvx --from ./gateflow gateflow --help
+UV_CACHE_DIR=./.uv-cache UV_TOOL_DIR=./.uv-tools uvx --from ./ gateflow --help
 ```
 
 ### Local editable install
 
 ```bash
-cd gateflow
 uv sync
 uv run gateflow --help
 ```
 
-### Future `pipx` path
-
-After publishing pre-release distributions to an index, install with:
+### `pipx`
 
 ```bash
 pipx install gateflow
@@ -31,7 +28,7 @@ gateflow --help
 
 ## Command Surface
 
-The standalone CLI exposes the extracted command groups:
+Stable v1 groups:
 
 - `init`
 - `config`
@@ -50,6 +47,4 @@ The standalone CLI exposes the extracted command groups:
 - `backlog`
 - `closeout-refs`
 
-`import-luvatrix` supports `--check` to emit deterministic drift output and non-zero exit when `.gateflow/*` diverges from `ops/planning/*`.
-
-`init` now defaults new workspaces to `storage.mode=local-external` and records deterministic workspace connection metadata in `.gateflow/connection.json`.
+See v1 contract details in `docs/v1-compatibility-contract.md`.
